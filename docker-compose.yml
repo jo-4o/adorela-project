@@ -1,0 +1,66 @@
+services:
+  # ==================== BANCO DE DADOS ====================
+  postgres:
+    image: docker.io/library/postgres:16-alpine
+    container_name: adorela-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-adorela}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-123456}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==================== KEYCLOAK ====================
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.1.1
+    container_name: adorela-keycloak
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-adorela}
+      KC_DB_USERNAME: ${POSTGRES_USER:-postgres}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-123456}
+    command: ["start-dev", "--import-realm"]
+    ports:
+      - "8181:8080"
+    volumes:
+      - ./keycloak/realm-adorela.json:/opt/keycloak/data/import/realm-adorela.json:ro,Z
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ==================== BACKEND API ====================
+  api:
+    image: adorela-api:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: adorela-api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-adorela}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-123456}
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/adorela
+      ADORELA_UPLOAD_DIR: /app/uploads
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads_data:/app/uploads:Z
+    depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+
+volumes:
+  postgres_data:
+  keycloak_data:
+  uploads_data:
