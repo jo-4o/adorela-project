@@ -1,0 +1,74 @@
+<main class="min-h-screen bg-stone-50 font-sans text-stone-900">
+  <header class="bg-white shadow-sm border-b border-stone-200" *ngIf="!isLoginRoute()">
+    <div class="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
+      <h1 class="text-3xl font-serif font-bold text-crust-brown tracking-tight">
+        🥐 Adorela <span class="text-bread-gold">Padaria</span>
+      </h1>
+      <nav class="flex items-center space-x-8 font-medium">
+        <a href="#" class="hover:text-bread-gold transition">Início</a>
+        <a href="#" class="hover:text-bread-gold transition">Cardápio</a>
+        <a href="#" class="hover:text-bread-gold transition">Contato</a>
+        <a routerLink="/login" class="bg-crust-brown text-white px-6 py-2 rounded-full hover:bg-bread-dark transition shadow-md">
+          Área Administrativa
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="py-16 bg-cream">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <h2 class="text-5xl font-serif font-extrabold text-crust-brown mb-4">Sabor artesanal em cada pedaço.</h2>
+      <p class="text-xl text-stone-600 mb-8 max-w-2xl mx-auto">Dos clássicos pães franceses às mais finas iguarias da confeitaria, a Adorela traz o calor do forno para o seu dia.</p>
+      <div class="flex justify-center gap-4">
+        <div class="w-24 h-1 bg-bread-gold rounded-full"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-7xl mx-auto px-4 py-16">
+    <h3 class="text-2xl font-bold mb-10 text-stone-800 flex items-center gap-2">
+      <span class="w-8 h-8 bg-bread-gold rounded-lg flex items-center justify-center text-white">✨</span>
+      Destaques da Nossa Vitrine
+    </h3>
+
+    <div *ngIf="loading" class="text-center py-10">
+      <p class="text-stone-400 animate-pulse text-lg italic">Carregando fornada...</p>
+    </div>
+
+    <div *ngIf="!loading && products.length === 0" class="bg-stone-100 rounded-2xl p-12 text-center border-2 border-dashed border-stone-200">
+      <p class="text-stone-500 italic text-lg">O forno ainda está aquecendo! Nenhum produto disponível no momento.</p>
+    </div>
+
+    <div *ngIf="!loading && products.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div *ngFor="let product of products" 
+           class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 border border-stone-100 group">
+        
+        <div class="h-56 bg-stone-200 relative overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&q=80&w=600" 
+               alt="Bread" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+          <div class="absolute top-4 right-4 bg-bread-gold text-white text-xs font-bold px-3 py-1 rounded-full">
+            NOVIDADE
+          </div>
+        </div>
+        
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-2">
+            <h4 class="text-xl font-bold text-crust-brown">{{ product.name }}</h4>
+            <span class="text-lg font-bold text-bread-dark">{{ product.price | currency:'BRL' }}</span>
+          </div>
+          <p class="text-stone-500 text-sm mb-6 leading-relaxed line-clamp-2">{{ product.description }}</p>
+          <button class="w-full border-2 border-bread-gold text-bread-gold font-bold py-2 rounded-xl hover:bg-bread-gold hover:text-white transition duration-300">
+            Ver Detalhes
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-crust-brown text-stone-200 py-12 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p class="mb-4">© 2026 Padaria Adorela - Feito com paixão no Pop!_OS.</p>
+      <p class="text-stone-400 text-sm">Rua das Amêndoas, 123 - Centro, Pop!_City</p>
+    </div>
+  </footer>
+</main>

@@ -1,0 +1,74 @@
+<!-- Hero Section -->
+<section class="relative min-h-[75vh] flex items-center justify-center overflow-hidden bg-bread-dark">
+  <div class="absolute inset-0">
+    <img src="https://images.unsplash.com/photo-1549931319-a545dcf3bc73?auto=format&fit=crop&q=80&w=2000" 
+         class="w-full h-full object-cover opacity-40 scale-105 animate-[imageZoom_20s_ease-out_infinite_alternate]" alt="Padaria Adorela">
+    <div class="absolute inset-0 bg-gradient-to-t from-crust-brown/90 via-crust-brown/40 to-transparent"></div>
+  </div>
+  
+  <div class="relative z-10 text-center px-4 max-w-4xl mx-auto mt-16 animate-slide-up">
+    <span class="text-bread-gold uppercase tracking-[0.3em] text-sm font-semibold mb-6 block">Bem-vindo à Adorela</span>
+    <h1 class="text-5xl md:text-7xl font-serif font-bold text-cream mb-6 leading-tight drop-shadow-lg">
+      A Essência do Trigo<br><span class="italic font-light opacity-90">Feita Arte</span>
+    </h1>
+    <div class="w-24 h-1 bg-gradient-to-r from-bread-gold to-accent mx-auto mb-8 rounded-full"></div>
+    <p class="text-xl md:text-2xl text-sand/90 font-light max-w-2xl mx-auto mb-10 leading-relaxed drop-shadow-md">
+      Experiências artesanais traduzidas em sabores que abraçam a alma e despertam os sentidos.
+    </p>
+    <a href="/cardapio" class="inline-block bg-bread-gold hover:bg-accent text-crust-brown hover:text-white transition-all duration-300 font-semibold px-10 py-4 rounded-full shadow-[0_4px_20px_rgba(212,163,115,0.4)] hover:shadow-[0_4px_25px_rgba(224,122,95,0.6)] hover:-translate-y-1">
+      Explorar Cardápio
+    </a>
+  </div>
+</section>
+
+<!-- Featured Products Section -->
+<section class="py-24 px-4 bg-cream relative">
+  <!-- Decorative background elements -->
+  <div class="absolute top-0 right-0 w-64 h-64 bg-bread-gold/10 rounded-full blur-3xl -translate-y-1/2"></div>
+  <div class="absolute bottom-0 left-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl translate-y-1/2"></div>
+  
+  <div class="max-w-7xl mx-auto relative z-10">
+    <div class="text-center mb-20 animate-slide-up">
+      <span class="text-accent uppercase tracking-widest text-sm font-bold block mb-3">Direto do Forno</span>
+      <h2 class="text-4xl md:text-5xl font-serif font-bold text-crust-brown">
+        Destaques da Fornada
+      </h2>
+    </div>
+
+    <!-- Loading Skeleton -->
+    <div *ngIf="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+      <div *ngFor="let i of [1,2,3]" class="bg-white rounded-[2rem] p-4 shadow-xl border border-sand/50 h-[500px] animate-pulse">
+        <div class="w-full h-64 bg-sand rounded-[1.5rem] mb-6"></div>
+        <div class="h-8 bg-sand rounded-md w-3/4 mx-auto mb-4"></div>
+        <div class="h-4 bg-sand/50 rounded-md w-full mb-2"></div>
+        <div class="h-4 bg-sand/50 rounded-md w-5/6 mx-auto"></div>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+      <div *ngFor="let product of products" class="group bg-white rounded-[2rem] p-4 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(212,163,115,0.15)] transition-all duration-500 hover:-translate-y-2 border border-sand/40 flex flex-col items-center">
+        <!-- Image Container -->
+        <div class="relative w-full h-72 rounded-[1.5rem] overflow-hidden mb-6 shadow-inner">
+          <div class="absolute inset-0 bg-crust-brown/20 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+          <img [src]="product.imageUrl || 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600'" 
+               class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+               [alt]="product.name">
+          <!-- Price Tag -->
+          <div class="absolute top-4 right-4 z-20 backdrop-blur-md bg-white/80 px-4 py-2 rounded-xl shadow-lg border border-white/50 text-crust-brown font-bold flex items-center gap-1 group-hover:bg-white transition-colors duration-300">
+            <span class="text-xs font-normal">R$</span>
+            <span class="text-xl leading-none">{{ product.price }}</span>
+          </div>
+        </div>
+        
+        <!-- Content -->
+        <h3 class="text-2xl font-serif font-bold text-crust-brown group-hover:text-accent transition-colors duration-300 mb-3 text-center">
+          {{ product.name }}
+        </h3>
+        <p class="text-crust-brown/70 text-center leading-relaxed font-light text-sm px-2">
+          {{ product.description }}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

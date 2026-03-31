@@ -1,0 +1,72 @@
+<section class="min-h-screen bg-cream py-24 px-4 relative">
+  <!-- Decorative Background -->
+  <div class="absolute top-0 left-0 w-full h-96 bg-bread-dark rounded-b-[4rem] shadow-2xl z-0"></div>
+  
+  <div class="max-w-7xl mx-auto relative z-10">
+    <div class="text-center mb-16 animate-slide-up">
+      <span class="text-bread-gold uppercase tracking-widest text-sm font-bold block mb-4">Nossas Delícias</span>
+      <h2 class="text-5xl font-serif font-bold text-cream drop-shadow-md">Menu Completo</h2>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="flex flex-wrap justify-center gap-4 mb-16 animate-fade-in">
+      <button 
+        (click)="filterBy(null)" 
+        [class]="activeCategory === null 
+          ? 'bg-accent text-white shadow-lg scale-105' 
+          : 'bg-white/80 text-crust-brown hover:bg-white hover:shadow-md hover:-translate-y-1'"
+        class="px-6 py-2 rounded-full font-medium transition-all duration-300 backdrop-blur-sm border border-sand/50">
+        Todos
+      </button>
+      <button 
+        *ngFor="let c of categories" 
+        (click)="filterBy(c)" 
+        [class]="activeCategory === c 
+          ? 'bg-accent text-white shadow-lg scale-105' 
+          : 'bg-white/80 text-crust-brown hover:bg-white hover:shadow-md hover:-translate-y-1'"
+        class="px-6 py-2 rounded-full font-medium transition-all duration-300 backdrop-blur-sm border border-sand/50">
+        {{ c }}
+      </button>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div *ngFor="let p of filtered" class="group bg-white rounded-3xl p-3 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_15px_35px_rgba(212,163,115,0.15)] transition-all duration-500 hover:-translate-y-2 border border-sand flex flex-col h-full animate-fade-in">
+        <!-- Image -->
+        <div class="relative w-full h-56 rounded-2xl overflow-hidden mb-4 bg-sand">
+          <div class="absolute inset-0 bg-crust-brown/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+          <img [src]="p.imageUrl || 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600'" 
+               class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+               [alt]="p.name">
+        </div>
+        
+        <!-- Content -->
+        <div class="px-3 pb-3 flex flex-col flex-grow">
+          <div class="flex justify-between items-start mb-2 gap-2">
+            <h3 class="font-serif text-xl font-bold text-crust-brown leading-tight">{{ p.name }}</h3>
+            <span class="font-bold text-accent whitespace-nowrap">{{ p.price | currency:'BRL' }}</span>
+          </div>
+          
+          <p class="text-sm text-crust-brown/70 flex-grow font-light leading-relaxed mb-4">
+            {{ p.description }}
+          </p>
+          
+          <div class="flex items-center justify-between mt-auto pt-4 border-t border-sand">
+            <span class="text-xs font-medium text-bread-gold uppercase tracking-wider">
+              {{ p.category?.name || 'Outros' }}
+            </span>
+            <span class="text-xs text-crust-brown/50 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full" [ngClass]="(p.stockQuantity || 0) > 0 ? 'bg-green-500' : 'bg-red-500'"></span>
+              {{ (p.stockQuantity || 0) > 0 ? (p.stockQuantity || 0) + ' unid.' : 'Esgotado' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Empty State -->
+    <div *ngIf="filtered.length === 0" class="text-center py-20">
+      <p class="text-crust-brown/50 text-xl font-light">Nenhum produto encontrado nesta categoria.</p>
+    </div>
+  </div>
+</section>
