@@ -39,12 +39,12 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size,
             @RequestParam(defaultValue = "name,asc") String sort,
-            @RequestParam(required = false) String q
-    ) {
-        String[] sortParams = sort != null && !sort.isEmpty() ? sort.split(",") : new String[]{"name", "asc"};
+            @RequestParam(required = false) String q) {
+        String[] sortParams = sort != null && !sort.isEmpty() ? sort.split(",") : new String[] { "name", "asc" };
         String sortProperty = sortParams.length > 0 && !sortParams[0].isEmpty() ? sortParams[0] : "name";
         Sort.Direction direction = sortParams.length > 1 && sortParams[1].equalsIgnoreCase("desc")
-                ? Sort.Direction.DESC : Sort.Direction.ASC;
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortProperty));
         Page<Product> result = productRepository.searchActive(q, pageable);
         return ResponseEntity.ok(result);
