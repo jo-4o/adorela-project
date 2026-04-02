@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+
+/* Tailwind globals */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base site styles */
+html, body {
+  height: 100%;
+}
+body {
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #FDFBF7;
+  color: #3E2723;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #F3EDE2;
+}
+::-webkit-scrollbar-thumb {
+  background: #D4A373;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #E07A5F;
+}

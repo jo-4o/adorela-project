@@ -1,0 +1,126 @@
+<div class="animate-fade-in">
+  <!-- Welcome -->
+  <div class="mb-10">
+    <h1 class="text-4xl font-serif font-bold text-crust-brown mb-2">Resumo Geral</h1>
+    <p class="text-crust-brown/60">Acompanhe as métricas e novidades da loja.</p>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+    <!-- Stat 1 -->
+    <a routerLink="/admin/produtos" class="bg-white rounded-2xl p-6 shadow-sm border border-sand hover:shadow-md hover:-translate-y-1 transition-all group flex items-center justify-between">
+      <div>
+        <span class="text-sm font-bold text-crust-brown/50 uppercase tracking-widest block mb-1">Produtos</span>
+        <span class="text-3xl font-bold text-crust-brown">{{ products.length }}</span>
+      </div>
+      <div class="w-16 h-16 rounded-full bg-sand/50 flex items-center justify-center text-bread-gold group-hover:bg-bread-gold group-hover:text-white transition-colors">
+        <svg width="28" height="28" fill="none" class="opacity-80" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      </div>
+    </a>
+
+    <!-- Stat 2 -->
+    <a routerLink="/admin/categorias" class="bg-white rounded-2xl p-6 shadow-sm border border-sand hover:shadow-md hover:-translate-y-1 transition-all group flex items-center justify-between">
+      <div>
+        <span class="text-sm font-bold text-crust-brown/50 uppercase tracking-widest block mb-1">Categorias</span>
+        <span class="text-3xl font-bold text-crust-brown">{{ categories.length }}</span>
+      </div>
+      <div class="w-16 h-16 rounded-full bg-sand/50 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-colors">
+        <svg width="28" height="28" fill="none" class="opacity-80" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      </div>
+    </a>
+
+    <!-- Stat 3 -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-sand flex items-center justify-between">
+      <div>
+        <span class="text-sm font-bold text-crust-brown/50 uppercase tracking-widest block mb-1">Destaques</span>
+        <span class="text-3xl font-bold text-crust-brown">{{ getFeaturedCount() }}</span>
+      </div>
+      <div class="w-16 h-16 rounded-full bg-sand/50 flex items-center justify-center text-bread-gold">
+        <svg width="28" height="28" fill="none" class="opacity-80" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+    </div>
+
+    <!-- Stat 4 -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-sand flex items-center justify-between">
+      <div>
+        <span class="text-sm font-bold text-crust-brown/50 uppercase tracking-widest block mb-1">Estoque Total</span>
+        <span class="text-3xl font-bold text-crust-brown">{{ getTotalStock() }}</span>
+      </div>
+      <div class="w-16 h-16 rounded-full bg-sand/50 flex items-center justify-center text-accent">
+        <svg width="28" height="28" fill="none" class="opacity-80" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Quick Actions -->
+    <div class="lg:col-span-1 flex flex-col gap-6">
+      <h3 class="text-2xl font-serif font-bold text-crust-brown">Ações Rápidas</h3>
+      
+      <a routerLink="/admin/produtos" class="bg-crust-brown text-white rounded-2xl p-6 flex items-center justify-between hover:bg-bread-dark transition-colors shadow-lg">
+        <div class="flex items-center gap-4">
+          <div class="bg-white/20 p-3 rounded-full"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          <span class="font-bold text-lg">Novo Produto</span>
+        </div>
+      </a>
+      
+      <a routerLink="/admin/categorias" class="bg-white border border-sand text-crust-brown rounded-2xl p-6 flex items-center justify-between hover:bg-sand/30 transition-colors shadow-sm">
+        <div class="flex items-center gap-4">
+          <div class="bg-sand p-3 rounded-full text-accent"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          <span class="font-bold text-lg">Nova Categoria</span>
+        </div>
+      </a>
+
+      <a routerLink="/cardapio" target="_blank" class="bg-white border border-sand text-crust-brown rounded-2xl p-6 flex items-center justify-between hover:bg-sand/30 transition-colors shadow-sm">
+        <div class="flex items-center gap-4">
+          <div class="bg-sand p-3 rounded-full text-bread-gold"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+          <span class="font-bold text-lg">Ver Cardápio</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Recent Products -->
+    <div class="lg:col-span-2">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-2xl font-serif font-bold text-crust-brown">Adicionados Recentemente</h3>
+        <a routerLink="/admin/produtos" class="text-accent hover:text-bread-gold font-bold transition-colors">Ver todos →</a>
+      </div>
+
+      <div class="bg-white border border-sand rounded-2xl shadow-sm overflow-hidden min-h-[300px]">
+        
+        <div *ngIf="isLoading" class="p-12 text-center flex flex-col items-center justify-center">
+          <div class="w-8 h-8 rounded-full border-4 border-sand border-t-accent animate-spin mb-4"></div>
+          <p class="text-crust-brown/60">Carregando...</p>
+        </div>
+
+        <div *ngIf="!isLoading && products.length === 0" class="p-12 text-center flex flex-col items-center justify-center">
+          <div class="w-16 h-16 bg-sand rounded-full flex items-center justify-center text-crust-brown/30 mb-4">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+          </div>
+          <p class="text-crust-brown/60 font-medium mb-4">Nenhum produto cadastrado ainda</p>
+          <a routerLink="/admin/produtos" class="inline-block bg-crust-brown text-white font-bold py-2 px-6 rounded-full hover:bg-bread-dark transition-colors">Adicionar Primeiro</a>
+        </div>
+
+        <ul *ngIf="!isLoading && products.length > 0" class="divide-y divide-sand">
+          <li *ngFor="let p of getRecentProducts()" class="p-4 hover:bg-sand/20 transition-colors flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-sand rounded-lg overflow-hidden flex-shrink-0">
+                <img [src]="p.imageUrl || 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=100'" class="w-full h-full object-cover">
+              </div>
+              <div class="flex flex-col">
+                <span class="font-bold text-crust-brown">{{ p.name }}</span>
+                <span class="text-xs text-crust-brown/60 uppercase tracking-wider">{{ p.category?.name || 'Sem categoria' }}</span>
+              </div>
+            </div>
+            <div class="flex flex-col items-end">
+              <span class="font-bold text-crust-brown">{{ p.price | currency:'BRL' }}</span>
+              <span class="text-xs px-2 py-0.5 rounded-full" [ngClass]="(p.stockQuantity || 0) > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+                {{ p.stockQuantity || 0 }} unid.
+              </span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

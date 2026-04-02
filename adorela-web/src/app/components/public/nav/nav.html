@@ -1,0 +1,26 @@
+<nav class="bg-cream/80 backdrop-blur-md sticky top-0 z-50 border-b border-sand shadow-sm transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-20 items-center">
+      
+      <div class="flex items-center gap-3 cursor-pointer group" routerLink="/">
+        <span class="text-3xl drop-shadow-sm group-hover:scale-110 transition-transform duration-300">🥐</span>
+        <div class="flex flex-col leading-tight">
+          <span class="text-2xl font-serif font-bold text-crust-brown tracking-tighter group-hover:text-bread-dark transition-colors">ADORELA</span>
+          <span class="text-[10px] tracking-[0.3em] text-bread-gold font-bold uppercase group-hover:text-accent transition-colors">Artesanal</span>
+        </div>
+      </div>
+      
+      <div class="hidden md:flex items-center space-x-10 text-xs font-bold uppercase tracking-widest text-crust-brown/70">
+        <a routerLink="/" routerLinkActive="text-bread-gold after:opacity-100" [routerLinkActiveOptions]="{exact: true}" class="relative hover:text-bread-gold transition-colors py-2 after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-bread-gold after:opacity-0 after:transition-opacity">Início</a>
+        <a routerLink="/cardapio" routerLinkActive="text-bread-gold after:opacity-100" class="relative hover:text-bread-gold transition-colors py-2 after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-bread-gold after:opacity-0 after:transition-opacity">Cardápio</a>
+        <a href="#" class="relative hover:text-bread-gold transition-colors py-2 after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-bread-gold after:opacity-0 after:transition-opacity">Nossa História</a>
+        
+        <a routerLink="/admin" class="bg-crust-brown text-white px-7 py-3 rounded-full hover:bg-bread-dark transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 inline-block border border-transparent">Painel Gestão</a>
+      </div>
+
+      <div class="md:hidden text-crust-brown text-2xl hover:text-bread-gold transition-colors cursor-pointer">
+        <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </div>
+    </div>
+  </div>
+</nav>
