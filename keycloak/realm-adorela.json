@@ -22,8 +22,8 @@
       "enabled": true,
       "publicClient": true,
       "directAccessGrantsEnabled": true,
-      "redirectUris": ["http://localhost:4200/*"],
-      "webOrigins": ["http://localhost:4200"],
+      "redirectUris": ["http://localhost:4200/*", "http://localhost/*", "*"],
+      "webOrigins": ["http://localhost:4200", "http://localhost", "*"],
       "protocolMappers": [
         {
           "name": "realm roles",
