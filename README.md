@@ -6,21 +6,20 @@ Sistema de gestão de produtos e categorias.
 
 - **Backend:** Spring Boot 4, PostgreSQL, Keycloak
 - **Frontend:** Angular 21, Tailwind CSS
-- **Infraestrutura:** Docker, Nginx
 
 ## Arquitetura de Deploy (3 VMs)
 
 ```
 ┌─────────────────────┐     ┌─────────────────────┐     ┌─────────────────────┐
 │       VM 1          │     │       VM 2          │     │       VM 3          │
-│  PostgreSQL :5432   │◄────│  Spring Boot :8080  │     │   Nginx :80         │
+│  PostgreSQL :5432   │◄────│  Spring Boot :8080  │     │   Angular :80       │
 │  Keycloak   :8080   │     │  (adorela-api)      │     │  (adorela-web)      │
 │                     │     │                     │     │                     │
-│  docker-compose     │     │  docker-compose     │     │  docker-compose     │
-│  .db.yml            │     │  .api.yml           │     │  .web.yml           │
+│  scripts/           │     │  scripts/           │     │  scripts/           │
+│  vm1-start.sh       │     │  vm2-start.sh       │     │  vm3-start.sh       │
 └─────────────────────┘     └─────────────────────┘     └─────────────────────┘
          ▲                           ▲                           │
-         │                           │        proxy /api/        │
+         │                           │          API calls        │
          │                           └───────────────────────────┘
          │                                       ▲
          └───────────────────────────────────────┘
@@ -29,103 +28,110 @@ Sistema de gestão de produtos e categorias.
 
 ## Requisitos
 
-- Docker e Docker Compose (nas VMs)
-- Java 17+ e Maven (desenvolvimento local)
-- Node.js 22+ e npm (desenvolvimento local)
+Nas VMs (Ubuntu/Debian recomendado):
+
+| VM | Requisitos |
+|----|------------|
+| VM 1 | PostgreSQL 16+, Java 17+ (para Keycloak) |
+| VM 2 | Java 17+, Maven |
+| VM 3 | Node.js 22+, npm |
 
 ---
 
-## Deploy em Produção (3 VMs)
+## Deploy em Produção (3 VMs, sem Docker)
 
-### 1. Preparar o `.env`
+### 1. Clonar o projeto em cada VM
 
 ```bash
-cp .env.example .env
+git clone <repo-url>
+cd adorela-project
 ```
-
-Edite o `.env` com os IPs reais das suas VMs:
-
-```env
-# IPs das VMs
-VM1_HOST=192.168.1.10      # PostgreSQL + Keycloak
-API_HOST=192.168.1.11      # Backend API
-WEB_HOST=192.168.1.12      # Frontend Nginx
-
-# Backend -> Banco (apontar para VM 1)
-SPRING_DATASOURCE_URL=jdbc:postgresql://192.168.1.10:5432/adorela
-
-# Backend -> Keycloak (URL pública)
-SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://192.168.1.10:8080/realms/adorela
-
-# Backend -> CORS (URL do frontend)
-ADORELA_CORS_ALLOWED_ORIGINS=http://192.168.1.12
-
-# Frontend -> Keycloak (URL pública)
-KEYCLOAK_URL=http://192.168.1.10:8080
-```
-
-> Basta trocar os IPs `192.168.1.x` pelos da sua rede. As senhas já vêm configuradas.
 
 ### 2. VM 1 — PostgreSQL + Keycloak
 
+Instalar dependências:
+
 ```bash
-# Copie o projeto para a VM e entre no diretório
-docker compose -f docker-compose.db.yml --env-file .env up -d
+sudo apt update && sudo apt install -y postgresql openjdk-17-jre-headless
+
+# Baixar Keycloak 21.1.1
+wget -qO- https://github.com/keycloak/keycloak/releases/download/21.1.1/keycloak-21.1.1.tar.gz | tar xz -C /opt
+sudo ln -s /opt/keycloak-21.1.1 /opt/keycloak
 ```
 
-> Após o primeiro deploy, acesse o Keycloak Admin (`http://<VM1_HOST>:8080`)
-> e ajuste no client `adorela-web`:
-> - **Valid Redirect URIs:** `http://<WEB_HOST>/*`
-> - **Web Origins:** `http://<WEB_HOST>`
+Iniciar:
+
+```bash
+chmod +x scripts/vm1-start.sh
+./scripts/vm1-start.sh
+```
+
+> Isso configura o PostgreSQL, importa o realm do Keycloak e inicia tudo.
+>
+> Após o primeiro start, acesse `http://<VM1_IP>:8080` e no client `adorela-web`:
+> - **Valid Redirect URIs:** `http://<VM3_IP>/*`
+> - **Web Origins:** `http://<VM3_IP>`
 
 ### 3. VM 2 — Backend API
 
+Instalar dependências:
+
 ```bash
-docker compose -f docker-compose.api.yml --env-file .env up -d --build
+sudo apt update && sudo apt install -y openjdk-17-jdk maven
+```
+
+Configurar IPs e iniciar:
+
+```bash
+chmod +x scripts/vm2-start.sh
+export VM1_HOST=<IP_DA_VM1>      # PostgreSQL + Keycloak
+export WEB_HOST=<IP_DA_VM3>      # Frontend (para CORS)
+./scripts/vm2-start.sh
 ```
 
 ### 4. VM 3 — Frontend Web
 
+Instalar dependências:
+
 ```bash
-docker compose -f docker-compose.web.yml --env-file .env up -d --build
+# Instalar Node.js 22
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt install -y nodejs
+```
+
+Configurar IPs e iniciar:
+
+```bash
+chmod +x scripts/vm3-start.sh
+export VM1_HOST=<IP_DA_VM1>      # Keycloak
+export API_HOST=<IP_DA_VM2>      # Backend API
+./scripts/vm3-start.sh
 ```
 
 ### Verificação
 
-| Serviço    | URL                              |
-| ---------- | -------------------------------- |
-| Frontend   | `http://<WEB_HOST>`              |
-| API        | `http://<API_HOST>:8080/api/products` |
-| Swagger    | `http://<API_HOST>:8080/swagger-ui.html` |
-| Keycloak   | `http://<VM1_HOST>:8080`         |
+| Serviço    | URL                                      |
+| ---------- | ---------------------------------------- |
+| Frontend   | `http://<VM3_IP>`                        |
+| API        | `http://<VM2_IP>:8080/api/products`      |
+| Swagger    | `http://<VM2_IP>:8080/swagger-ui.html`   |
+| Keycloak   | `http://<VM1_IP>:8080`                   |
 
 ---
 
 ## Desenvolvimento Local
 
-### Tudo junto (Docker)
+### Backend
 
 ```bash
-cp .env.example .env
-# Ajuste as senhas no .env
-docker compose up -d --build
-```
+# Subir PostgreSQL + Keycloak localmente (precisa tê-los instalados)
+# Ou usar Docker se disponível:
+# docker compose up -d postgres keycloak
 
-Acesse:
-- Frontend: http://localhost
-- API: http://localhost:8080
-- Keycloak: http://localhost:8181
-
-### Sem Docker (dev)
-
-#### Backend
-
-```bash
-docker compose up -d postgres keycloak   # só banco + auth
 ./mvnw spring-boot:run
 ```
 
-#### Frontend
+### Frontend
 
 ```bash
 cd adorela-web
@@ -134,6 +140,26 @@ npm start
 ```
 
 Frontend em http://localhost:4200
+
+---
+
+## Deploy com Docker (opcional)
+
+Se tiver Docker disponível, também existem arquivos Docker Compose por VM:
+
+```bash
+cp .env.example .env
+# Ajustar IPs no .env
+
+# VM 1
+docker compose -f docker-compose.db.yml --env-file .env up -d
+
+# VM 2
+docker compose -f docker-compose.api.yml --env-file .env up -d --build
+
+# VM 3
+docker compose -f docker-compose.web.yml --env-file .env up -d --build
+```
 
 ---
 
@@ -149,17 +175,17 @@ Frontend em http://localhost:4200
 adorela-project/
 ├── src/                        # Backend Spring Boot
 ├── adorela-web/                # Frontend Angular
-│   ├── Dockerfile              # Build Angular + Nginx
-│   ├── nginx.conf.template     # Config Nginx com proxy reverso
-│   └── docker-entrypoint.sh    # Injeta env vars em runtime
 ├── keycloak/
-│   └── realm-adorela.json      # Config do realm
-├── Dockerfile                  # Build do backend
-├── docker-compose.yml          # Dev local (tudo junto)
-├── docker-compose.db.yml       # VM 1: PostgreSQL + Keycloak
-├── docker-compose.api.yml      # VM 2: Backend API
-├── docker-compose.web.yml      # VM 3: Frontend Nginx
-└── .env.example                # Template de variáveis
+│   └── realm-adorela.json      # Configuração do realm
+├── scripts/
+│   ├── vm1-start.sh            # VM 1: PostgreSQL + Keycloak
+│   ├── vm2-start.sh            # VM 2: Backend API
+│   └── vm3-start.sh            # VM 3: Frontend Angular
+├── docker-compose.yml          # Dev local com Docker (opcional)
+├── docker-compose.db.yml       # VM 1 com Docker (opcional)
+├── docker-compose.api.yml      # VM 2 com Docker (opcional)
+├── docker-compose.web.yml      # VM 3 com Docker (opcional)
+└── .env.example                # Template de variáveis (Docker)
 ```
 
 ## Testes
