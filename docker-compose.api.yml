@@ -1,0 +1,29 @@
+# =====================================================================
+# VM 2 - Backend API (Spring Boot)
+# Execute: docker compose -f docker-compose.api.yml --env-file .env up -d
+#
+# Antes de rodar, faça o build da imagem:
+#   docker build -t adorela-api:latest .
+# =====================================================================
+services:
+  api:
+    image: adorela-api:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: adorela-api
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:?Defina SPRING_DATASOURCE_URL no .env}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:?Defina a senha do banco no .env}
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI:?Defina a issuer URI do Keycloak no .env}
+      ADORELA_CORS_ALLOWED_ORIGINS: ${ADORELA_CORS_ALLOWED_ORIGINS:-http://localhost}
+      ADORELA_UPLOAD_DIR: /app/uploads
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads_data:/app/uploads
+
+volumes:
+  uploads_data:

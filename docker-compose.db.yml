@@ -1,0 +1,52 @@
+# =====================================================================
+# VM 1 - Banco de Dados + Keycloak (PostgreSQL + Keycloak)
+# Execute: docker compose -f docker-compose.db.yml --env-file .env up -d
+#
+# IMPORTANTE: Após o primeiro deploy, configure no Keycloak Admin:
+#   - Realm adorela > Client adorela-web > Valid Redirect URIs: http://<WEB_HOST>/*
+#   - Realm adorela > Client adorela-web > Web Origins: http://<WEB_HOST>
+# =====================================================================
+services:
+  postgres:
+    image: docker.io/library/postgres:16-alpine
+    container_name: adorela-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-adorela}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no .env}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.1.1
+    container_name: adorela-keycloak
+    restart: unless-stopped
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Defina KEYCLOAK_ADMIN_PASSWORD no .env}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-adorela}
+      KC_DB_USERNAME: ${POSTGRES_USER:-postgres}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no .env}
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY_HEADERS: xforwarded
+    command: ["start", "--import-realm"]
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./keycloak/realm-adorela.json:/opt/keycloak/data/import/realm-adorela.json:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
