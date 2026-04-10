@@ -51,13 +51,8 @@ VM1_HOST=192.168.1.10      # PostgreSQL + Keycloak
 API_HOST=192.168.1.11      # Backend API
 WEB_HOST=192.168.1.12      # Frontend Nginx
 
-# Senhas (TROQUE!)
-POSTGRES_PASSWORD=sua_senha_segura
-KEYCLOAK_ADMIN_PASSWORD=sua_senha_segura
-
-# Backend -> Banco
+# Backend -> Banco (apontar para VM 1)
 SPRING_DATASOURCE_URL=jdbc:postgresql://192.168.1.10:5432/adorela
-SPRING_DATASOURCE_PASSWORD=sua_senha_segura
 
 # Backend -> Keycloak (URL pública)
 SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://192.168.1.10:8080/realms/adorela
@@ -68,6 +63,8 @@ ADORELA_CORS_ALLOWED_ORIGINS=http://192.168.1.12
 # Frontend -> Keycloak (URL pública)
 KEYCLOAK_URL=http://192.168.1.10:8080
 ```
+
+> Basta trocar os IPs `192.168.1.x` pelos da sua rede. As senhas já vêm configuradas.
 
 ### 2. VM 1 — PostgreSQL + Keycloak
 
