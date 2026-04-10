@@ -19,7 +19,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*") // Permitir acesso do Angular localmente
 public class ProductController {
 
     private final ProductRepository productRepository;

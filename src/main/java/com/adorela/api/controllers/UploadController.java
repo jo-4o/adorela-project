@@ -20,7 +20,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/uploads")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class UploadController {
 
     @Value("${adorela.upload.dir:uploads}")
