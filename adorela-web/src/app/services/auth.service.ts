@@ -1,4 +1,5 @@
 import Keycloak from 'keycloak-js';
+import { environment } from '../../environments/environment';
 
 class AuthService {
   private keycloak: Keycloak | null = null;
@@ -6,9 +7,9 @@ class AuthService {
 
   async init(): Promise<boolean> {
     this.keycloak = new Keycloak({
-      url: 'http://localhost:8180',
-      realm: 'adorela',
-      clientId: 'adorela-web'
+      url: environment.keycloakUrl,
+      realm: environment.keycloakRealm,
+      clientId: environment.keycloakClientId
     });
 
     const authenticated = await this.keycloak.init({
