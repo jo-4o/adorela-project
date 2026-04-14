@@ -13,13 +13,13 @@ set -e
 
 # ---------- Configuração ----------
 # Troque pelos IPs reais das suas VMs
-VM1_HOST="${VM1_HOST:-192.168.1.10}"
-WEB_HOST="${WEB_HOST:-192.168.1.12}"
+DB_HOST="${DB_HOST:-192.168.0.40}"
+WEB_HOST="${WEB_HOST:-192.168.0.38}"
 
-export SPRING_DATASOURCE_URL="jdbc:postgresql://${VM1_HOST}:5432/adorela"
+export SPRING_DATASOURCE_URL="jdbc:postgresql://${DB_HOST}:5432/adorela"
 export SPRING_DATASOURCE_USERNAME="${POSTGRES_USER:-postgres}"
 export SPRING_DATASOURCE_PASSWORD="${POSTGRES_PASSWORD:-123456}"
-export SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI="http://${VM1_HOST}:8080/realms/adorela"
+export SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI="http://${DB_HOST}:8181/realms/adorela"
 export ADORELA_CORS_ALLOWED_ORIGINS="http://${WEB_HOST}"
 export ADORELA_UPLOAD_DIR="${ADORELA_UPLOAD_DIR:-./uploads}"
 

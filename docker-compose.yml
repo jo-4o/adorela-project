@@ -49,7 +49,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-123456}
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://localhost:8181/realms/adorela
-      ADORELA_CORS_ALLOWED_ORIGINS: http://localhost:4200,http://localhost
+      ADORELA_CORS_ALLOWED_ORIGINS: http://localhost:4200,http://localhost,http://192.168.0.38
       ADORELA_UPLOAD_DIR: /app/uploads
     ports:
       - "8080:8080"
