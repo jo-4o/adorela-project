@@ -34,7 +34,9 @@ class AuthService {
 
   logout(): void {
     this.clearRefreshInterval();
-    this.keycloak?.logout();
+    this.keycloak?.logout({
+      redirectUri: window.location.origin + '/login'
+    });
   }
 
   getToken(): string | null {

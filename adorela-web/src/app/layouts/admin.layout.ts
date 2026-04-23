@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { authService } from '../services/auth.service';
 
 @Component({
   selector: 'app-admin-layout',
@@ -13,9 +14,6 @@ export class AdminLayoutComponent {
   constructor(private router: Router) {}
 
   logout(): void {
-    localStorage.removeItem('keycloak_token');
-    localStorage.removeItem('keycloak_refresh_token');
-    localStorage.removeItem('keycloak_user');
-    this.router.navigate(['/login']);
+    authService.logout();
   }
 }

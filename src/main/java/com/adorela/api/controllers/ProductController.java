@@ -67,14 +67,14 @@ public class ProductController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasAnyRole('dono', 'gerente')")
     public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product) {
         Product saved = productRepository.save(product);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasAnyRole('dono', 'gerente')")
     public ResponseEntity<Product> updateProduct(@PathVariable("id") Long id, @Valid @RequestBody Product product) {
         return productRepository.findById(id)
                 .map(existing -> {
@@ -98,7 +98,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('dono')")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") Long id) {
         if (!productRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
