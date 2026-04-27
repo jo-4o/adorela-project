@@ -221,18 +221,14 @@ export API_HOST=<IP_DA_VM2>      # Backend API
 ---
 
 ## Desenvolvimento Local
->>>>>>> 03ccb5563f18546d1ece0133adc875f6e3f52a68
-
 ### Backend
 ```bash
-<<<<<<< HEAD
 docker compose up -d postgres keycloak
 =======
 # Subir PostgreSQL + Keycloak localmente (precisa tê-los instalados)
 # Ou usar Docker se disponível:
 # docker compose up -d postgres keycloak
 
->>>>>>> 03ccb5563f18546d1ece0133adc875f6e3f52a68
 ./mvnw spring-boot:run
 ```
 
