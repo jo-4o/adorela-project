@@ -18,6 +18,21 @@ import java.util.Arrays;
 import java.util.List;
 import org.springframework.http.HttpMethod;
 
+/**
+ * Configuração de segurança do Adorela.
+ *
+ * Perfis (roles) definidos no Keycloak:
+ * - dono     → Proprietário: acesso total (CRUD completo)
+ * - gerente  → Gerente: pode criar e editar, mas não excluir
+ * - revisao  → Revisão: apenas leitura (GET)
+ *
+ * Mapeamento de endpoints:
+ * - GET  /api/**           → público (sem autenticação)
+ * - POST /api/**           → dono ou gerente
+ * - PUT  /api/**           → dono ou gerente
+ * - PATCH /api/**          → dono ou gerente
+ * - DELETE /api/**         → apenas dono
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -32,18 +47,20 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                // Swagger / OpenAPI
+                // Swagger / OpenAPI — público
                 .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**").permitAll()
-                // OPTIONS requests (preflight) - must be allowed for CORS
+                // Preflight CORS
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                // Leitura pública - GET de produtos e categorias
+                // Leitura pública — GET de produtos, categorias e uploads
                 .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
-                // Escrita requer autenticação
-                .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/api/**").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated()
-                .requestMatchers(HttpMethod.PATCH, "/api/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/uploads/**").permitAll()
+                // Criação e edição — dono ou gerente
+                .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole("dono", "gerente")
+                .requestMatchers(HttpMethod.PUT, "/api/**").hasAnyRole("dono", "gerente")
+                .requestMatchers(HttpMethod.PATCH, "/api/**").hasAnyRole("dono", "gerente")
+                // Exclusão — apenas dono
+                .requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("dono")
                 .anyRequest().permitAll()
             )
             .oauth2ResourceServer(oauth -> oauth
@@ -58,12 +75,12 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         List<String> origins = Arrays.asList(allowedOrigins.split(","));
-        config.setAllowedOrigins(origins);
+        config.setAllowedOriginPatterns(origins);
         config.setAllowedHeaders(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setExposedHeaders(List.of("Authorization", "Content-Disposition"));
         config.setMaxAge(3600L);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
@@ -71,9 +88,9 @@ public class SecurityConfig {
 
     private JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        // buscar roles em realm_access.roles
+        // Buscar roles no claim "roles" mapeado pelo Keycloak via protocolMapper
         grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("realm_access.roles");
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         return converter;

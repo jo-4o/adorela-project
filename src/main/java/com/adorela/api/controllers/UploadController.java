@@ -20,7 +20,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/uploads")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class UploadController {
 
     @Value("${adorela.upload.dir:uploads}")
@@ -30,7 +29,7 @@ public class UploadController {
      * Faz upload de uma imagem e retorna a URL pública.
      */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasAnyRole('dono', 'gerente')")
     public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("error", "Arquivo vazio"));

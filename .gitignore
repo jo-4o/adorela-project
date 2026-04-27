@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Deploy ###
+.env
+
+### Documents ###
+*.pdf

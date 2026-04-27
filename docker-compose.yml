@@ -49,7 +49,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-adorela}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-123456}
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/adorela
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://localhost:8181/realms/adorela
+      ADORELA_CORS_ALLOWED_ORIGINS: http://localhost:4200,http://localhost,http://192.168.0.38
       ADORELA_UPLOAD_DIR: /app/uploads
     ports:
       - "8080:8080"
@@ -62,11 +63,16 @@ services:
         condition: service_started
 
   # ==================== FRONTEND WEB ====================
+<<<<<<< HEAD
   frontend:
+=======
+  web:
+>>>>>>> 03ccb5563f18546d1ece0133adc875f6e3f52a68
     image: adorela-web:latest
     build:
       context: ./adorela-web
       dockerfile: Dockerfile
+<<<<<<< HEAD
       network: host
     container_name: adorela-frontend
     ports:
@@ -74,6 +80,20 @@ services:
     depends_on:
       api:
         condition: service_started
+=======
+    container_name: adorela-web
+    environment:
+      API_HOST: api
+      API_PORT: "8080"
+      API_URL: ""
+      KEYCLOAK_URL: http://localhost:8181
+      KEYCLOAK_REALM: adorela
+      KEYCLOAK_CLIENT_ID: adorela-web
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+>>>>>>> 03ccb5563f18546d1ece0133adc875f6e3f52a68
 
 volumes:
   postgres_data:

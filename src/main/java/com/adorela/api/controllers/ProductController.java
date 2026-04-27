@@ -19,7 +19,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*") // Permitir acesso do Angular localmente
 public class ProductController {
 
     private final ProductRepository productRepository;
@@ -39,12 +38,12 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size,
             @RequestParam(defaultValue = "name,asc") String sort,
-            @RequestParam(required = false) String q
-    ) {
-        String[] sortParams = sort != null && !sort.isEmpty() ? sort.split(",") : new String[]{"name", "asc"};
+            @RequestParam(required = false) String q) {
+        String[] sortParams = sort != null && !sort.isEmpty() ? sort.split(",") : new String[] { "name", "asc" };
         String sortProperty = sortParams.length > 0 && !sortParams[0].isEmpty() ? sortParams[0] : "name";
         Sort.Direction direction = sortParams.length > 1 && sortParams[1].equalsIgnoreCase("desc")
-                ? Sort.Direction.DESC : Sort.Direction.ASC;
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortProperty));
         Page<Product> result = productRepository.searchActive(q, pageable);
         return ResponseEntity.ok(result);
@@ -68,14 +67,14 @@ public class ProductController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasAnyRole('dono', 'gerente')")
     public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product) {
         Product saved = productRepository.save(product);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasAnyRole('dono', 'gerente')")
     public ResponseEntity<Product> updateProduct(@PathVariable("id") Long id, @Valid @RequestBody Product product) {
         return productRepository.findById(id)
                 .map(existing -> {
@@ -99,7 +98,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('dono')")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") Long id) {
         if (!productRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
