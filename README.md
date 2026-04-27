@@ -133,7 +133,6 @@ Nas VMs (Ubuntu/Debian recomendado):
 ```bash
 git clone <repo-url>
 cd adorela-project
-<<<<<<< HEAD
 docker compose up -d --build
 ```
 
@@ -146,8 +145,6 @@ Serviços (HTTP — TLS ainda não configurado):
 
 ## 🛠️ Desenvolvimento
 =======
-```
-
 ### 2. VM 1 — PostgreSQL + Keycloak
 
 Instalar dependências:
