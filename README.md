@@ -4,13 +4,11 @@ Sistema de gestão de produtos e categorias — Projeto Mensal 3 (Engenharia de 
 
 ## Stack
 
-<<<<<<< HEAD
 - **Backend:** Spring Boot 3 (Java 17), Spring Security (OAuth2 Resource Server / JWT)
 - **Frontend:** Angular 18 + TailwindCSS + Nginx
 - **Banco:** PostgreSQL 16
 - **IAM:** Keycloak 21
 - **Infra:** Docker / Docker Compose (alvo: 3 VMs)
-=======
 - **Backend:** Spring Boot 4, PostgreSQL, Keycloak
 - **Frontend:** Angular 21, Tailwind CSS
 
@@ -32,11 +30,9 @@ Sistema de gestão de produtos e categorias — Projeto Mensal 3 (Engenharia de 
          └───────────────────────────────────────┘
                     JWT issuer-uri
 ```
->>>>>>> 03ccb5563f18546d1ece0133adc875f6e3f52a68
 
 ---
 
-<<<<<<< HEAD
 ## 📋 Checklist de Progresso (PM3)
 
 Legenda: ✅ pronto · 🟡 parcial · ❌ não iniciado
@@ -120,7 +116,6 @@ Legenda: ✅ pronto · 🟡 parcial · ❌ não iniciado
 ---
 
 ## 🚀 Execução local (estado atual)
-=======
 Nas VMs (Ubuntu/Debian recomendado):
 
 | VM | Requisitos |
@@ -134,7 +129,6 @@ Nas VMs (Ubuntu/Debian recomendado):
 ## Deploy em Produção (3 VMs, sem Docker)
 
 ### 1. Clonar o projeto em cada VM
->>>>>>> 03ccb5563f18546d1ece0133adc875f6e3f52a68
 
 ```bash
 git clone <repo-url>
@@ -249,7 +243,6 @@ npm install
 npm start
 ```
 
-<<<<<<< HEAD
 ## 📁 Estrutura
 
 ```
@@ -260,7 +253,6 @@ adorela-project/
 ├── docker-compose.yml      # Stack atual (single host)
 ├── Dockerfile              # Build da API
 └── docs/                   # (a criar) diagramas, deploy, segurança, OWASP
-=======
 Frontend em http://localhost:4200
 
 ---
@@ -308,7 +300,6 @@ adorela-project/
 ├── docker-compose.api.yml      # VM 2 com Docker (opcional)
 ├── docker-compose.web.yml      # VM 3 com Docker (opcional)
 └── .env.example                # Template de variáveis (Docker)
->>>>>>> 03ccb5563f18546d1ece0133adc875f6e3f52a68
 ```
 
 ## 🧪 Testes
