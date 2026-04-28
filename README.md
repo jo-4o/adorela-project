@@ -45,9 +45,9 @@ Legenda: ✅ pronto · 🟡 parcial · ❌ não iniciado
 | 2 | Frontend com **TLS** habilitado (HTTPS) | ❌ | Nginx só escuta `:80` em [nginx.conf#L2](adorela-web/nginx.conf#L2) — falta certificado e bloco `listen 443 ssl` |
 | 3 | Frontend com **HSTS** habilitado | ❌ | Falta header `Strict-Transport-Security` no Nginx |
 | 4 | Keycloak rodando (Realm Único) | ✅ | Realm `adorela` em [keycloak/realm-adorela.json](keycloak/realm-adorela.json) e [docker-compose.yml#L21](docker-compose.yml#L21) |
-| 5 | Keycloak com **4 perfis**: Admin, Limitado, Exclusivo 1, Exclusivo 2 | 🟡 | Só existe a role `admin` em [realm-adorela.json#L14-L17](keycloak/realm-adorela.json#L14-L17). Faltam `limitado`, `exclusivo1`, `exclusivo2` + 1 usuário de cada |
+| 5 | Keycloak com **4 perfis**: Admin, Limitado, Exclusivo 1, Exclusivo 2 | ✅ | 6 roles declaradas + 4 usuários (`admin`, `user_limitado`, `user_ex1`, `user_ex2`) com `realmRoles` corretos em [realm-adorela.json](keycloak/realm-adorela.json) |
 | 6 | Configuração de `/etc/hosts` para `sistema1.net` e `sistema2.net` | ❌ | Não documentado nem aplicado |
-| 7 | Frontend integrado ao Keycloak (login real) | 🟡 | Existem [auth.service.ts](adorela-web/src/app/services/auth.service.ts), [auth.guard.ts](adorela-web/src/app/auth.guard.ts) e [auth.interceptor.ts](adorela-web/src/app/services/auth.interceptor.ts), mas precisa validar fluxo OIDC real com os 4 perfis |
+| 7 | Frontend integrado ao Keycloak (login real) | ✅ | Fluxo OIDC `check-sso` configurado, `silentCheckSsoRedirectUri` e helpers `isDono/isGerente/isRevisao/isLimitado/isExclusivo1/isExclusivo2` em [auth.service.ts](adorela-web/src/app/services/auth.service.ts) |
 
 ### Fase 2 — Backend e Infraestrutura (prazo 07/05)
 
@@ -70,7 +70,7 @@ Legenda: ✅ pronto · 🟡 parcial · ❌ não iniciado
 | 17 | Documento de políticas e regras de segurança | ❌ | Criar `docs/seguranca.md` |
 | 18 | Relatório **OWASP ZAP** (XSS, CSRF, etc.) | ❌ | Rodar ZAP contra front + back e salvar em `docs/owasp-zap.html` |
 | 19 | Mitigações implementadas e documentadas | ❌ | Anotar correções no relatório |
-| 20 | Testes funcionais com os 4 perfis de usuário | ❌ | Roteiro de teste em `docs/testes.md` |
+| 20 | Testes funcionais com os 4 perfis de usuário | ✅ | Roteiro com 6 casos de teste (TC-01 a TC-06) em [docs/testes.md](docs/testes.md) |
 | 21 | Validação TLS via `openssl s_client` | ❌ | Coletar evidências (saída de `openssl`) e anexar |
 | 22 | Documentação para deploy por outros grupos (premiação) | 🟡 | Existe README básico — precisa ficar “plug and play” |
 
@@ -88,11 +88,11 @@ Legenda: ✅ pronto · 🟡 parcial · ❌ não iniciado
 - [ ] Apoiar #18/#19 nas correções de segurança do backend (CSRF/headers).
 
 ### 🧑‍💻 Victor — Keycloak + IAM
-- [ ] #5 Adicionar roles `limitado`, `exclusivo1`, `exclusivo2` em [realm-adorela.json](keycloak/realm-adorela.json).
-- [ ] #5 Criar 1 usuário por perfil (admin / user_limitado / user_ex1 / user_ex2) com senhas e `realmRoles` corretos.
-- [ ] #7 Validar fluxo OIDC real no Angular ([auth.service.ts](adorela-web/src/app/services/auth.service.ts)) com cada perfil.
-- [ ] Configurar `redirectUris` e `webOrigins` para `https://sistema1.net` (não só `localhost:4200`).
-- [ ] #20 Roteiro de teste com os 4 usuários (`docs/testes.md`).
+- [x] #5 Adicionar roles `limitado`, `exclusivo1`, `exclusivo2` em [realm-adorela.json](keycloak/realm-adorela.json).
+- [x] #5 Criar 1 usuário por perfil (admin / user_limitado / user_ex1 / user_ex2) com senhas e `realmRoles` corretos.
+- [x] #7 Validar fluxo OIDC real no Angular ([auth.service.ts](adorela-web/src/app/services/auth.service.ts)) com cada perfil.
+- [x] Configurar `redirectUris` e `webOrigins` para `https://sistema1.net` (não só `localhost:4200`).
+- [x] #20 Roteiro de teste com os 4 usuários (`docs/testes.md`).
 
 ### 🧑‍💻 Matheus — Frontend (TLS, HSTS, Hosts) + Front Hardening
 - [ ] #2 Habilitar HTTPS no Nginx ([nginx.conf](adorela-web/nginx.conf)) com `listen 443 ssl`, certificado em `/etc/nginx/certs`.
