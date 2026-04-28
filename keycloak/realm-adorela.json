@@ -6,6 +6,7 @@
   "registrationAllowed": false,
   "loginWithEmailAllowed": true,
   "duplicateEmailsAllowed": false,
+
   "roles": {
     "realm": [
       {
@@ -19,9 +20,89 @@
       {
         "name": "revisao",
         "description": "Perfil de revisão/leitura. Pode visualizar todos os recursos, mas não pode modificar."
+      },
+      {
+        "name": "limitado",
+        "description": "Acesso limitado. Pode apenas visualizar produtos públicos, sem acesso a categorias ou operações administrativas."
+      },
+      {
+        "name": "exclusivo1",
+        "description": "Perfil exclusivo nível 1. Acesso a recursos exclusivos do grupo 1 (ex.: relatórios especiais, área VIP básica)."
+      },
+      {
+        "name": "exclusivo2",
+        "description": "Perfil exclusivo nível 2. Acesso a recursos exclusivos do grupo 2 (ex.: painel premium, funcionalidades avançadas)."
       }
     ]
   },
+
+  "users": [
+    {
+      "username": "admin",
+      "email": "admin@adorela.local",
+      "firstName": "Admin",
+      "lastName": "Sistema",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Admin@1234",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["dono", "gerente", "revisao", "limitado", "exclusivo1", "exclusivo2"]
+    },
+    {
+      "username": "user_limitado",
+      "email": "limitado@adorela.local",
+      "firstName": "Usuário",
+      "lastName": "Limitado",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Limitado@1234",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["limitado"]
+    },
+    {
+      "username": "user_ex1",
+      "email": "exclusivo1@adorela.local",
+      "firstName": "Usuário",
+      "lastName": "Exclusivo1",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Exclusivo1@1234",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["exclusivo1"]
+    },
+    {
+      "username": "user_ex2",
+      "email": "exclusivo2@adorela.local",
+      "firstName": "Usuário",
+      "lastName": "Exclusivo2",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Exclusivo2@1234",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["exclusivo2"]
+    }
+  ],
+
   "clients": [
     {
       "clientId": "adorela-web",
@@ -31,12 +112,14 @@
       "redirectUris": [
         "http://localhost:4200/*",
         "http://localhost/*",
-        "http://e-instancia.net/*"
+        "http://e-instancia.net/*",
+        "https://sistema1.net/*"
       ],
       "webOrigins": [
         "http://localhost:4200",
         "http://localhost",
-        "http://e-instancia.net"
+        "http://e-instancia.net",
+        "https://sistema1.net"
       ],
       "protocolMappers": [
         {
