@@ -88,11 +88,11 @@ Legenda: ✅ pronto · 🟡 parcial · ❌ não iniciado
 - [ ] Apoiar #18/#19 nas correções de segurança do backend (CSRF/headers).
 
 ### 🧑‍💻 Victor — Keycloak + IAM
-- [ ] #5 Adicionar roles `limitado`, `exclusivo1`, `exclusivo2` em [realm-adorela.json](keycloak/realm-adorela.json).
-- [ ] #5 Criar 1 usuário por perfil (admin / user_limitado / user_ex1 / user_ex2) com senhas e `realmRoles` corretos.
-- [ ] #7 Validar fluxo OIDC real no Angular ([auth.service.ts](adorela-web/src/app/services/auth.service.ts)) com cada perfil.
-- [ ] Configurar `redirectUris` e `webOrigins` para `https://sistema1.net` (não só `localhost:4200`).
-- [ ] #20 Roteiro de teste com os 4 usuários (`docs/testes.md`).
+- [X] #5 Adicionar roles `limitado`, `exclusivo1`, `exclusivo2` em [realm-adorela.json](keycloak/realm-adorela.json).
+- [X] #5 Criar 1 usuário por perfil (admin / user_limitado / user_ex1 / user_ex2) com senhas e `realmRoles` corretos.
+- [X] #7 Validar fluxo OIDC real no Angular ([auth.service.ts](adorela-web/src/app/services/auth.service.ts)) com cada perfil.
+- [X] Configurar `redirectUris` e `webOrigins` para `https://sistema1.net` (não só `localhost:4200`).
+- [X] #20 Roteiro de teste com os 4 usuários (`docs/testes.md`).
 
 ### 🧑‍💻 Matheus — Frontend (TLS, HSTS, Hosts) + Front Hardening
 - [ ] #2 Habilitar HTTPS no Nginx ([nginx.conf](adorela-web/nginx.conf)) com `listen 443 ssl`, certificado em `/etc/nginx/certs`.
