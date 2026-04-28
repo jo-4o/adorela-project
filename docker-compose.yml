@@ -43,6 +43,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      network: host
     container_name: adorela-api
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-adorela}
@@ -62,11 +63,24 @@ services:
         condition: service_started
 
   # ==================== FRONTEND WEB ====================
+<<<<<<< HEAD
+  frontend:
+=======
   web:
+>>>>>>> 03ccb5563f18546d1ece0133adc875f6e3f52a68
     image: adorela-web:latest
     build:
       context: ./adorela-web
       dockerfile: Dockerfile
+<<<<<<< HEAD
+      network: host
+    container_name: adorela-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      api:
+        condition: service_started
+=======
     container_name: adorela-web
     environment:
       API_HOST: api
@@ -79,6 +93,7 @@ services:
       - "80:80"
     depends_on:
       - api
+>>>>>>> 03ccb5563f18546d1ece0133adc875f6e3f52a68
 
 volumes:
   postgres_data:
