@@ -143,8 +143,6 @@ Serviços (HTTP — TLS ainda não configurado):
 - Keycloak: http://localhost:8181 (admin/admin)
 - Postgres: `localhost:5433` (postgres/123456)
 
-## 🛠️ Desenvolvimento
-=======
 ### 2. VM 1 — PostgreSQL + Keycloak
 
 Instalar dependências:
@@ -220,8 +218,6 @@ export API_HOST=<IP_DA_VM2>      # Backend API
 ## Desenvolvimento Local
 ### Backend
 ```bash
-docker compose up -d postgres keycloak
-=======
 # Subir PostgreSQL + Keycloak localmente (precisa tê-los instalados)
 # Ou usar Docker se disponível:
 # docker compose up -d postgres keycloak
