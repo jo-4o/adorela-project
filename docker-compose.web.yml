@@ -24,3 +24,4 @@ services:
       KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-adorela-web}
     ports:
       - "80:80"
+      - "443:443"

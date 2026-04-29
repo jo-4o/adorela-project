@@ -63,24 +63,11 @@ services:
         condition: service_started
 
   # ==================== FRONTEND WEB ====================
-<<<<<<< HEAD
-  frontend:
-=======
   web:
->>>>>>> 03ccb5563f18546d1ece0133adc875f6e3f52a68
     image: adorela-web:latest
     build:
       context: ./adorela-web
       dockerfile: Dockerfile
-<<<<<<< HEAD
-      network: host
-    container_name: adorela-frontend
-    ports:
-      - "4200:80"
-    depends_on:
-      api:
-        condition: service_started
-=======
     container_name: adorela-web
     environment:
       API_HOST: api
@@ -91,9 +78,10 @@ services:
       KEYCLOAK_CLIENT_ID: adorela-web
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
-      - api
->>>>>>> 03ccb5563f18546d1ece0133adc875f6e3f52a68
+      api:
+        condition: service_started
 
 volumes:
   postgres_data:

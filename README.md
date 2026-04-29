@@ -42,11 +42,11 @@ Legenda: ✅ pronto · 🟡 parcial · ❌ não iniciado
 | # | Requisito | Status | Onde está / o que falta |
 |---|-----------|--------|-------------------------|
 | 1 | Frontend Angular hospedado em container | ✅ | [adorela-web/Dockerfile](adorela-web/Dockerfile) + [nginx.conf](adorela-web/nginx.conf) |
-| 2 | Frontend com **TLS** habilitado (HTTPS) | ❌ | Nginx só escuta `:80` em [nginx.conf#L2](adorela-web/nginx.conf#L2) — falta certificado e bloco `listen 443 ssl` |
-| 3 | Frontend com **HSTS** habilitado | ❌ | Falta header `Strict-Transport-Security` no Nginx |
+| 2 | Frontend com **TLS** habilitado (HTTPS) | ✅ | Configurado no `nginx.conf` escutando na porta 443 |
+| 3 | Frontend com **HSTS** habilitado | ✅ | Header `Strict-Transport-Security` configurado no Nginx |
 | 4 | Keycloak rodando (Realm Único) | ✅ | Realm `adorela` em [keycloak/realm-adorela.json](keycloak/realm-adorela.json) e [docker-compose.yml#L21](docker-compose.yml#L21) |
 | 5 | Keycloak com **4 perfis**: Admin, Limitado, Exclusivo 1, Exclusivo 2 | ✅ | 6 roles declaradas + 4 usuários (`admin`, `user_limitado`, `user_ex1`, `user_ex2`) com `realmRoles` corretos em [realm-adorela.json](keycloak/realm-adorela.json) |
-| 6 | Configuração de `/etc/hosts` para `sistema1.net` e `sistema2.net` | ❌ | Não documentado nem aplicado |
+| 6 | Configuração de `/etc/hosts` para `sistema1.net` e `sistema2.net` | ✅ | Documentado no `docs/deploy.md` e testado localmente |
 | 7 | Frontend integrado ao Keycloak (login real) | ✅ | Fluxo OIDC `check-sso` configurado, `silentCheckSsoRedirectUri` e helpers `isDono/isGerente/isRevisao/isLimitado/isExclusivo1/isExclusivo2` em [auth.service.ts](adorela-web/src/app/services/auth.service.ts) |
 
 ### Fase 2 — Backend e Infraestrutura (prazo 07/05)
@@ -95,12 +95,19 @@ Legenda: ✅ pronto · 🟡 parcial · ❌ não iniciado
 - [x] #20 Roteiro de teste com os 4 usuários (`docs/testes.md`).
 
 ### 🧑‍💻 Matheus — Frontend (TLS, HSTS, Hosts) + Front Hardening
-- [ ] #2 Habilitar HTTPS no Nginx ([nginx.conf](adorela-web/nginx.conf)) com `listen 443 ssl`, certificado em `/etc/nginx/certs`.
-- [ ] #3 Adicionar `add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;`.
-- [ ] #2 Redirect 80 → 443.
-- [ ] #6 Documentar entradas em `/etc/hosts` (`sistema1.net`, `sistema2.net`) em `docs/deploy.md`.
-- [ ] Atualizar [adorela-web/Dockerfile](adorela-web/Dockerfile) para incluir certificados e expor `443`.
-- [ ] #18 Mitigar XSS encontrados no ZAP (sanitização Angular, CSP).
+- [✅] #2 Habilitar HTTPS no Nginx ([nginx.conf](adorela-web/nginx.conf)) com `listen 443 ssl`, certificado em `/etc/nginx/certs`.
+- [✅] #3 Adicionar `add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;`.
+- [✅] #2 Redirect 80 → 443.
+- [✅] #6 Documentar entradas em `/etc/hosts` (`sistema1.net`, `sistema2.net`) em `docs/deploy.md`.
+- [✅] Atualizar [adorela-web/Dockerfile](adorela-web/Dockerfile) para incluir certificados e expor `443`.
+- [✅] #18 Mitigar XSS encontrados no ZAP (sanitização Angular, CSP).
+
+**Comandos de Validação (Provas Técnicas - Matheus):**
+- **TLS/Certificado:** `openssl s_client -connect localhost:443 -showcerts < /dev/null`
+- **HSTS e CSP:** `curl -I -k https://localhost`
+- **Redirect 80->443:** `curl -I http://localhost`
+- **Arquivo Hosts:** `ping -n 4 sistema1.net` e `curl -I -k https://sistema2.net`
+- **Dockerfile e Portas:** `docker ps` e `docker exec adorela-web ls -la /etc/nginx/certs/`
 
 ### 🧑‍💻 Pedro — Infra (3 VMs, Postgres TLS, ZAP, Documentação)
 - [ ] #12 Habilitar TLS no Postgres (gerar `server.crt`/`server.key`, montar em [docker-compose.yml#L4](docker-compose.yml#L4), `command: -c ssl=on -c ssl_cert_file=... -c ssl_key_file=...`).
