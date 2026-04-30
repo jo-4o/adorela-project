@@ -79,6 +79,9 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    volumes:
+      - ./certs/api-cert.pem:/etc/nginx/certs/cert.pem:ro
+      - ./certs/api-key.pem:/etc/nginx/certs/key.pem:ro
     depends_on:
       api:
         condition: service_started

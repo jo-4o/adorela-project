@@ -37,3 +37,6 @@ build/
 
 ### Documents ###
 *.pdf
+
+# Certificados TLS gerados localmente
+certs/
