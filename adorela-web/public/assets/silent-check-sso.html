@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+<head>
+  <title>Silent SSO Check</title>
+</head>
+<body>
+  <script>
+    // Este arquivo é usado pelo Keycloak JS para verificar a sessão SSO
+    // em um iframe silencioso, sem redirecionar a página principal.
+    parent.postMessage(location.href, location.origin);
+  </script>
+</body>
+</html>

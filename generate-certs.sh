@@ -13,10 +13,10 @@ mkdir -p "$CERT_DIR"
 echo "==> Gerando certificado self-signed para a API (Spring Boot / Tomcat)..."
 
 # Gera chave privada + certificado X.509 (válido por 365 dias)
-openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -nodes \
+MSYS_NO_PATHCONV=1 openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -nodes \
   -keyout "${CERT_DIR}/api-key.pem" \
   -out    "${CERT_DIR}/api-cert.pem" \
-  -subj   "/CN=e-instancia.net/O=Adorela/C=BR" \
+  -subj   "//CN=e-instancia.net/O=Adorela/C=BR" \
   -addext "subjectAltName=DNS:localhost,DNS:e-instancia.net,IP:127.0.0.1"
 
 echo "==> Convertendo para formato PKCS12 (necessário para o Spring Boot)..."
@@ -28,10 +28,10 @@ openssl pkcs12 -export \
   -passout pass:adorela123
 
 echo "==> Gerando certificado self-signed para o PostgreSQL..."
-openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -nodes \
+MSYS_NO_PATHCONV=1 openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -nodes \
   -keyout "${CERT_DIR}/pg-key.pem" \
   -out    "${CERT_DIR}/pg-cert.pem" \
-  -subj   "/CN=adorela-db/O=Adorela/C=BR"
+  -subj   "//CN=adorela-db/O=Adorela/C=BR"
 
 # PostgreSQL exige permissões específicas para os arquivos de chave
 chmod 600 "${CERT_DIR}/pg-key.pem"
