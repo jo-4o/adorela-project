@@ -55,18 +55,18 @@ Legenda: ✅ pronto · 🟡 parcial · ❌ não iniciado
 |---|-----------|--------|-------------------------|
 | 8  | API RESTful Spring Boot | ✅ | [CategoryController.java](src/main/java/com/adorela/api/controllers/CategoryController.java), [ProductController.java](src/main/java/com/adorela/api/controllers/ProductController.java), [UploadController.java](src/main/java/com/adorela/api/controllers/UploadController.java) |
 | 9  | API integrada ao Keycloak (JWT) | ✅ | [SecurityConfig.java](src/main/java/com/adorela/api/config/SecurityConfig.java) + `issuer-uri` em [application.properties#L24](src/main/resources/application.properties#L24) |
-| 10 | Autorização por perfil (`@PreAuthorize`) | 🟡 | Hoje só `hasRole('admin')` (ver matches em [CategoryController.java#L35](src/main/java/com/adorela/api/controllers/CategoryController.java#L35), [ProductController.java#L71](src/main/java/com/adorela/api/controllers/ProductController.java#L71)). Precisa diferenciar Limitado / Exclusivo1 / Exclusivo2 |
+| 10 | Autorização por perfil (`@PreAuthorize`) | 🟡 | Implementado para `dono` e `gerente` nos controllers e `SecurityConfig`. Falta lógica para `limitado` e `exclusivo1/2`. |
 | 11 | Tomcat (embedded) com **TLS** | ❌ | [application.properties](src/main/resources/application.properties) usa `server.port=8080` HTTP. Falta `server.ssl.*` + keystore |
 | 12 | PostgreSQL com **TLS** | ❌ | [docker-compose.yml#L4-L9](docker-compose.yml#L4-L9) sem `ssl=on`, sem certificados, sem `sslmode=require` na URL JDBC |
 | 13 | Isolamento lógico entre sistemas | ❌ | Tudo na mesma rede default do compose. Falta segmentar redes / schemas |
-| 14 | Deploy em 3 VMs (VM1=Front, VM2=Back, VM3=DB) | ❌ | Hoje tudo roda em 1 host via [docker-compose.yml](docker-compose.yml). Falta separar compose por VM e variáveis de host |
+| 14 | Deploy em 3 VMs (VM1=Front, VM2=Back, VM3=DB) | 🟡 | Arquivos `docker-compose.vm*.yml` e `scripts/vm*-start.sh` criados. Falta teste em ambiente real. |
 
 ### Fase Final — Compliance e Segurança (prazo 14/05)
 
 | # | Requisito | Status | Observação |
 |---|-----------|--------|------------|
 | 15 | Diagrama da arquitetura distribuída (3 VMs) | ❌ | Criar em `docs/arquitetura.png` |
-| 16 | Passo a passo de configuração das VMs, TLS e Keycloak | ❌ | Criar `docs/deploy.md` |
+| 16 | Passo a passo de configuração das VMs, TLS e Keycloak | 🟡 | [docs/deploy.md](docs/deploy.md) iniciado com `/etc/hosts`. Falta detalhar comandos das VMs. |
 | 17 | Documento de políticas e regras de segurança | ❌ | Criar `docs/seguranca.md` |
 | 18 | Relatório **OWASP ZAP** (XSS, CSRF, etc.) | ❌ | Rodar ZAP contra front + back e salvar em `docs/owasp-zap.html` |
 | 19 | Mitigações implementadas e documentadas | ❌ | Anotar correções no relatório |
@@ -83,7 +83,7 @@ Legenda: ✅ pronto · 🟡 parcial · ❌ não iniciado
 ### 🧑‍💻 João — Backend + TLS da API
 - [ ] #10 Refinar `@PreAuthorize` para os 4 perfis (`admin`, `limitado`, `exclusivo1`, `exclusivo2`) em [CategoryController.java](src/main/java/com/adorela/api/controllers/CategoryController.java), [ProductController.java](src/main/java/com/adorela/api/controllers/ProductController.java) e [UploadController.java](src/main/java/com/adorela/api/controllers/UploadController.java).
 - [ ] #11 Habilitar TLS no Tomcat embedded (gerar keystore PKCS12, configurar `server.ssl.*` em [application.properties](src/main/resources/application.properties), expor `8443`).
-- [ ] #9/#10 Ajustar mapeamento de roles do JWT em [SecurityConfig.java](src/main/java/com/adorela/api/config/SecurityConfig.java) (claim `roles` → `ROLE_*`).
+- [x] #9/#10 Ajustar mapeamento de roles do JWT em [SecurityConfig.java](src/main/java/com/adorela/api/config/SecurityConfig.java) (claim `roles` → `ROLE_*`).
 - [ ] Atualizar [Dockerfile](Dockerfile) para copiar o keystore e expor `8443`.
 - [ ] Apoiar #18/#19 nas correções de segurança do backend (CSRF/headers).
 
