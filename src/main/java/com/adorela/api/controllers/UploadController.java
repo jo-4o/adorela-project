@@ -17,6 +17,18 @@ import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * UploadController — Upload e leitura de arquivos.
+ *
+ * Autorização por perfil (4 perfis funcionais):
+ *  - admin (dono/gerente): pode enviar imagens (POST)
+ *  - revisao:     somente leitura (GET) das imagens já publicadas
+ *  - limitado:    SEM acesso a uploads administrativos (apenas catálogo público)
+ *  - exclusivo1:  somente leitura (GET) — sem direito de upload
+ *  - exclusivo2:  somente leitura (GET) — sem direito de upload
+ *
+ * GET de arquivo é público (servir imagens do catálogo).
+ */
 @RestController
 @RequestMapping("/api/uploads")
 @RequiredArgsConstructor

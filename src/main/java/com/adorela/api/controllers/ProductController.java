@@ -16,6 +16,18 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+/**
+ * ProductController — Endpoints de produtos.
+ *
+ * Autorização por perfil (4 perfis funcionais):
+ *  - admin (dono/gerente/revisao): leitura + escrita + exclusão
+ *  - limitado:    apenas leitura de produtos públicos (catálogo)
+ *  - exclusivo1:  leitura completa + endpoints exclusivos do grupo 1
+ *  - exclusivo2:  leitura completa + endpoints exclusivos do grupo 2
+ *
+ * GETs públicos (acessíveis a anônimos) — qualquer usuário autenticado também acessa.
+ * Mutação (POST/PUT) restrita a dono/gerente. DELETE restrito a dono.
+ */
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor

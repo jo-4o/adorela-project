@@ -11,6 +11,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * CategoryController — Endpoints de categorias.
+ *
+ * Autorização por perfil (4 perfis funcionais):
+ *  - admin (dono/gerente/revisao): leitura + escrita + exclusão
+ *  - limitado:    SEM acesso a categorias (bloqueado em todos os endpoints)
+ *  - exclusivo1:  apenas leitura
+ *  - exclusivo2:  apenas leitura
+ *
+ * GETs também são acessíveis a usuários anônimos (catálogo público),
+ * mas usuários autenticados com role 'limitado' são explicitamente bloqueados.
+ */
 @RestController
 @RequestMapping("/api/categories")
 @RequiredArgsConstructor
@@ -19,11 +31,13 @@ public class CategoryController {
     private final CategoryRepository categoryRepository;
 
     @GetMapping
+    @PreAuthorize("!hasRole('limitado')")
     public ResponseEntity<List<Category>> getAllCategories() {
         return ResponseEntity.ok(categoryRepository.findByActiveTrue());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("!hasRole('limitado')")
     public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
         return categoryRepository.findById(id)
                 .map(ResponseEntity::ok)
