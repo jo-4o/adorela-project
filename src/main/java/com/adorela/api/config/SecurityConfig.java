@@ -21,17 +21,22 @@ import org.springframework.http.HttpMethod;
 /**
  * Configuração de segurança do Adorela.
  *
- * Perfis (roles) definidos no Keycloak:
- * - dono     → Proprietário: acesso total (CRUD completo)
- * - gerente  → Gerente: pode criar e editar, mas não excluir
- * - revisao  → Revisão: apenas leitura (GET)
+ * 4 perfis funcionais (alinhados ao realm `adorela` do Keycloak):
+ *  - admin (composto pelas roles dono + gerente + revisao): acesso total
+ *  - limitado:    visualização apenas do catálogo público de produtos
+ *  - exclusivo1:  leitura + área exclusiva do grupo 1
+ *  - exclusivo2:  leitura + área exclusiva do grupo 2
  *
- * Mapeamento de endpoints:
- * - GET  /api/**           → público (sem autenticação)
- * - POST /api/**           → dono ou gerente
- * - PUT  /api/**           → dono ou gerente
- * - PATCH /api/**          → dono ou gerente
- * - DELETE /api/**         → apenas dono
+ * Mapeamento das roles do JWT:
+ *  - O claim `roles` (mapper customizado no realm) é convertido em authorities
+ *    com prefixo `ROLE_` para que `hasRole(...)` / `hasAnyRole(...)` funcionem.
+ *
+ * Mapeamento de endpoints (defesa em profundidade — também há @PreAuthorize):
+ *  - GET  /api/products/**   → público (limitado pode visualizar catálogo)
+ *  - GET  /api/categories/** → bloqueado para limitado (via @PreAuthorize)
+ *  - GET  /api/uploads/**    → público (serve imagens do catálogo)
+ *  - POST/PUT/PATCH /api/**  → dono ou gerente
+ *  - DELETE /api/**          → apenas dono
  */
 @Configuration
 @EnableWebSecurity
@@ -45,16 +50,28 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            // API stateless baseada em JWT — CSRF não se aplica (sem cookies de sessão).
             .csrf(AbstractHttpConfigurer::disable)
+            // Headers de segurança (defesa em profundidade — apoio a #18/#19 OWASP).
+            .headers(headers -> headers
+                .contentTypeOptions(ct -> {})
+                .frameOptions(frame -> frame.deny())
+                .referrerPolicy(rp -> rp.policy(
+                    org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
+                .httpStrictTransportSecurity(hsts -> hsts
+                    .includeSubDomains(true)
+                    .maxAgeInSeconds(31_536_000))
+            )
             .authorizeHttpRequests(auth -> auth
                 // Swagger / OpenAPI — público
                 .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**").permitAll()
                 // Preflight CORS
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                // Leitura pública — GET de produtos, categorias e uploads
+                // Leitura pública — produtos e arquivos servidos
                 .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/uploads/**").permitAll()
+                // Categorias: leitura restrita (limitado é negado pelo @PreAuthorize do controller)
+                .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
                 // Criação e edição — dono ou gerente
                 .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole("dono", "gerente")
                 .requestMatchers(HttpMethod.PUT, "/api/**").hasAnyRole("dono", "gerente")
