@@ -50,12 +50,19 @@ services:
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-123456}
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI:-http://localhost:8080/realms/adorela}
-      ADORELA_CORS_ALLOWED_ORIGINS: ${ADORELA_CORS_ALLOWED_ORIGINS:-http://localhost:4200,http://localhost}
+      ADORELA_CORS_ALLOWED_ORIGINS: ${ADORELA_CORS_ALLOWED_ORIGINS:-https://localhost,https://localhost:4200,https://sistema2.net}
       ADORELA_UPLOAD_DIR: /app/uploads
+      # TLS / HTTPS habilitado por padrão em 8443
+      SERVER_PORT: ${SERVER_PORT:-8443}
+      SERVER_SSL_ENABLED: ${SERVER_SSL_ENABLED:-true}
+      SERVER_SSL_KEY_STORE: ${SERVER_SSL_KEY_STORE:-file:/app/certs/api-keystore.p12}
+      SERVER_SSL_KEY_STORE_PASSWORD: ${SERVER_SSL_KEY_STORE_PASSWORD:-adorela123}
+      SERVER_SSL_KEY_ALIAS: ${SERVER_SSL_KEY_ALIAS:-adorela-api}
     ports:
-      - "8080:8080"
+      - "8443:8443"
     volumes:
       - uploads_data:/app/uploads:Z
+      - ./certs:/app/certs:ro,Z
     depends_on:
       postgres:
         condition: service_healthy
