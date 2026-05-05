@@ -17,7 +17,7 @@
 
 set -e
 
-KC_URL="${KEYCLOAK_URL:-http://localhost:8181}"
+KC_URL="${KEYCLOAK_URL:-http://localhost:8080}"
 KC_REALM="adorela"
 KC_ADMIN="${KEYCLOAK_ADMIN:-admin}"
 KC_ADMIN_PASS="${KEYCLOAK_ADMIN_PASSWORD:-admin}"

@@ -53,15 +53,28 @@ npx ng build --configuration production
 
 DIST_DIR="$PROJECT_DIR/dist/adorela-web/browser"
 
+# Verificar certificados para HTTPS
+if [ ! -f "../certs/api-cert.pem" ]; then
+  echo "⚠️ AVISO: Certificados não encontrados em ../certs/."
+  echo "  Tentando gerar certificados automaticamente..."
+  chmod +x ../generate-certs.sh
+  cd .. && ./generate-certs.sh && cd adorela-web
+fi
+
 echo ""
 echo "=== Build concluído! ==="
 echo ""
-echo "Opção A - Servir com 'serve' (simples):"
+echo "Opção A - Servir com 'serve' (APENAS PARA TESTE RÁPIDO, SEM HTTPS):"
 echo "  npx serve -s $DIST_DIR -l 80"
 echo ""
-echo "Opção B - Servir com Nginx:"
-echo "  sudo cp -r $DIST_DIR/* /var/www/html/"
-echo "  (configure o Nginx com proxy_pass para http://${API_HOST}:8080 em /api/)"
+echo "Opção B - Servir com Nginx e HTTPS (RECOMENDADO PARA ENTREGA):"
+echo "  1. Instale o Nginx: sudo apt install nginx"
+echo "  2. Copie os arquivos: sudo cp -r $DIST_DIR/* /var/www/html/"
+echo "  3. Use o template 'nginx.conf.template' como base para o seu /etc/nginx/sites-available/default"
+echo "  4. Certifique-se de que os certificados estão em /etc/nginx/certs/"
+echo ""
+echo "Opção C - Usar Docker (MAIS SEGURO E RÁPIDO):"
+echo "  docker compose -f docker-compose.web.yml --env-file ../.env up -d --build"
 echo ""
 
 # Servir automaticamente se 'serve' estiver disponível

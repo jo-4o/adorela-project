@@ -19,7 +19,7 @@ WEB_HOST="${WEB_HOST:-192.168.0.38}"
 export SPRING_DATASOURCE_URL="jdbc:postgresql://${DB_HOST}:5432/adorela"
 export SPRING_DATASOURCE_USERNAME="${POSTGRES_USER:-postgres}"
 export SPRING_DATASOURCE_PASSWORD="${POSTGRES_PASSWORD:-123456}"
-export SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI="http://${DB_HOST}:8181/realms/adorela"
+export SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI="http://${DB_HOST}:8080/realms/adorela"
 export ADORELA_CORS_ALLOWED_ORIGINS="http://${WEB_HOST}"
 export ADORELA_UPLOAD_DIR="${ADORELA_UPLOAD_DIR:-./uploads}"
 
@@ -41,6 +41,7 @@ JAR_FILE=$(find target -name "*.jar" ! -name "*.original" 2>/dev/null | head -1)
 
 if [ -z "$JAR_FILE" ]; then
   echo "[1/2] Buildando o projeto..."
+  chmod +x ./mvnw
   ./mvnw clean package -DskipTests -q
   JAR_FILE=$(find target -name "*.jar" ! -name "*.original" | head -1)
 else

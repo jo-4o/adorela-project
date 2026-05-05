@@ -4,7 +4,7 @@
 export const environment = {
   production: true,
   apiUrl: 'https://e-instancia.net:8443',
-  keycloakUrl: 'http://e-instancia.net:8181',
+  keycloakUrl: 'http://e-instancia.net:8080',
   keycloakRealm: 'adorela',
   keycloakClientId: 'adorela-web'
 };

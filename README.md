@@ -147,7 +147,7 @@ Serviços (HTTP — TLS ainda não configurado):
 
 - Frontend: http://localhost:4200
 - API: http://localhost:8080 — Swagger em http://localhost:8080/swagger-ui.html
-- Keycloak: http://localhost:8181 (admin/admin)
+- Keycloak: http://localhost:8080 (admin/admin)
 - Postgres: `localhost:5433` (postgres/123456)
 
 ### 2. VM 1 — PostgreSQL + Keycloak

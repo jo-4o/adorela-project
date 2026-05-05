@@ -11,7 +11,7 @@
 
 | Item | Detalhe |
 |------|---------|
-| Keycloak rodando | `http://localhost:8181` |
+| Keycloak rodando | `http://localhost:8080` |
 | Frontend Angular | `http://localhost:4200` **ou** `https://sistema1.net` |
 | Backend API | `http://localhost:8080` |
 | Realm importado | `keycloak/realm-adorela.json` importado via `--import-realm` |
@@ -217,7 +217,7 @@ bash keycloak/init-users.sh
 ```json
 {
   "exp": 1234567890,
-  "iss": "http://localhost:8181/realms/adorela",
+  "iss": "http://localhost:8080/realms/adorela",
   "azp": "adorela-web",
   "roles": ["limitado"],
   "preferred_username": "user_limitado"

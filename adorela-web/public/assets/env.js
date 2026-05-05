@@ -4,5 +4,5 @@
 (function(window) {
   window.__env = window.__env || {};
   // window.__env.API_URL = 'http://localhost:8080';
-  // window.__env.KEYCLOAK_URL = 'http://localhost:8181';
+  // window.__env.KEYCLOAK_URL = 'http://localhost:8080';
 })(this);

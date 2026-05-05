@@ -9,7 +9,7 @@ const env = (window as any).__env || {};
 
 export const environment = {
   apiUrl: env.API_URL || 'http://localhost:8080',
-  keycloakUrl: env.KEYCLOAK_URL || 'http://localhost:8181',
+  keycloakUrl: env.KEYCLOAK_URL || 'http://localhost:8080',
   keycloakRealm: env.KEYCLOAK_REALM || 'adorela',
   keycloakClientId: env.KEYCLOAK_CLIENT_ID || 'adorela-web',
 };

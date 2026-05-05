@@ -22,7 +22,7 @@ POSTGRES_PASSWORD="${POSTGRES_PASSWORD:-123456}"
 KEYCLOAK_ADMIN="${KEYCLOAK_ADMIN:-admin}"
 KEYCLOAK_ADMIN_PASSWORD="${KEYCLOAK_ADMIN_PASSWORD:-admin}"
 KEYCLOAK_DIR="${KEYCLOAK_DIR:-/opt/keycloak}"
-REALM_FILE="$(dirname "$0")/keycloak/realm-adorela.json"
+REALM_FILE="$(dirname "$0")/../keycloak/realm-adorela.json"
 
 echo "=== VM 1: Configurando PostgreSQL + Keycloak ==="
 
