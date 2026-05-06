@@ -17,8 +17,10 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-123456}
     ports:
       - "5432:5432"
+    command: ["-c", "ssl=on", "-c", "ssl_cert_file=/var/lib/postgresql/certs/postgres-server.crt", "-c", "ssl_key_file=/var/lib/postgresql/certs/postgres-server.key"]
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./certs:/var/lib/postgresql/certs:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
       interval: 10s
