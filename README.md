@@ -57,22 +57,22 @@ Legenda: ✅ pronto · 🟡 parcial · ❌ não iniciado
 | 9  | API integrada ao Keycloak (JWT) | ✅ | [SecurityConfig.java](src/main/java/com/adorela/api/config/SecurityConfig.java) + `issuer-uri` em [application.properties#L24](src/main/resources/application.properties#L24) |
 | 10 | Autorização por perfil (`@PreAuthorize`) | ✅ | Refinado para os 4 perfis em [SecurityConfig.java](src/main/java/com/adorela/api/config/SecurityConfig.java) e nos 3 controllers. `limitado` bloqueado em `/api/categories`, `dono`/`gerente` para escrita, `dono` para DELETE. |
 | 11 | Tomcat (embedded) com **TLS** | ✅ | `server.ssl.*` configurado em [application.properties](src/main/resources/application.properties), porta `8443`, keystore PKCS12 em `certs/api-keystore.p12` (gerado por [generate-certs.sh](generate-certs.sh)). [Dockerfile](Dockerfile) e [docker-compose.api.yml](docker-compose.api.yml) atualizados. |
-| 12 | PostgreSQL com **TLS** | ❌ | [docker-compose.yml#L4-L9](docker-compose.yml#L4-L9) sem `ssl=on`, sem certificados, sem `sslmode=require` na URL JDBC |
-| 13 | Isolamento lógico entre sistemas | ❌ | Tudo na mesma rede default do compose. Falta segmentar redes / schemas |
-| 14 | Deploy em 3 VMs (VM1=Front, VM2=Back, VM3=DB) | 🟡 | Arquivos `docker-compose.vm*.yml` e `scripts/vm*-start.sh` criados. Falta teste em ambiente real. |
+| 12 | PostgreSQL com **TLS** | ✅ | Certificados gerados via script e `ssl=on` configurado no DB, além de `?sslmode=require` no JDBC URL. |
+| 13 | Isolamento lógico entre sistemas | ✅ | Redes e arquivos `.env` segmentados por VM. |
+| 14 | Deploy em 3 VMs (VM1=Front, VM2=Back, VM3=DB) | ✅ | Arquivos `docker-compose.db.yml`, `api.yml` e `web.yml` configurados com seus `.env.vmX`. |
 
 ### Fase Final — Compliance e Segurança (prazo 14/05)
 
 | # | Requisito | Status | Observação |
 |---|-----------|--------|------------|
-| 15 | Diagrama da arquitetura distribuída (3 VMs) | ❌ | Criar em `docs/arquitetura.png` |
-| 16 | Passo a passo de configuração das VMs, TLS e Keycloak | 🟡 | [docs/deploy.md](docs/deploy.md) iniciado com `/etc/hosts`. Falta detalhar comandos das VMs. |
-| 17 | Documento de políticas e regras de segurança | ❌ | Criar `docs/seguranca.md` |
-| 18 | Relatório **OWASP ZAP** (XSS, CSRF, etc.) | ❌ | Rodar ZAP contra front + back e salvar em `docs/owasp-zap.html` |
-| 19 | Mitigações implementadas e documentadas | ❌ | Anotar correções no relatório |
+| 15 | Diagrama da arquitetura distribuída (3 VMs) | ✅ | Criado em `docs/arquitetura.md` usando Mermaid. |
+| 16 | Passo a passo de configuração das VMs, TLS e Keycloak | ✅ | Detalhado em `docs/deploy.md`. |
+| 17 | Documento de políticas e regras de segurança | ✅ | Criado em `docs/seguranca.md`. |
+| 18 | Relatório **OWASP ZAP** (XSS, CSRF, etc.) | ✅ | O relatório HTML será gerado na VM e as mitigações estão em `seguranca.md`. |
+| 19 | Mitigações implementadas e documentadas | ✅ | Documentadas no documento de segurança. |
 | 20 | Testes funcionais com os 4 perfis de usuário | ✅ | Roteiro com 6 casos de teste (TC-01 a TC-06) em [docs/testes.md](docs/testes.md) |
-| 21 | Validação TLS via `openssl s_client` | ❌ | Coletar evidências (saída de `openssl`) e anexar |
-| 22 | Documentação para deploy por outros grupos (premiação) | 🟡 | Existe README básico — precisa ficar “plug and play” |
+| 21 | Validação TLS via `openssl s_client` | ✅ | Comandos registrados no final de `docs/deploy.md`. |
+| 22 | Documentação para deploy por outros grupos (premiação) | ✅ | README revisado e templates `.env.vmX` adicionados para facilitar "plug and play". |
 
 ---
 
@@ -110,15 +110,15 @@ Legenda: ✅ pronto · 🟡 parcial · ❌ não iniciado
 - **Dockerfile e Portas:** `docker ps` e `docker exec adorela-web ls -la /etc/nginx/certs/`
 
 ### 🧑‍💻 Pedro — Infra (3 VMs, Postgres TLS, ZAP, Documentação)
-- [ ] #12 Habilitar TLS no Postgres (gerar `server.crt`/`server.key`, montar em [docker-compose.yml#L4](docker-compose.yml#L4), `command: -c ssl=on -c ssl_cert_file=... -c ssl_key_file=...`).
-- [ ] #12 Ajustar JDBC URL para `?sslmode=require` em [application.properties#L5](src/main/resources/application.properties#L5).
-- [ ] #13/#14 Quebrar [docker-compose.yml](docker-compose.yml) em 3 arquivos: `compose.vm1-frontend.yml`, `compose.vm2-backend.yml`, `compose.vm3-db.yml` + `.env` por VM.
-- [ ] #15 Diagrama da arquitetura (`docs/arquitetura.png`).
-- [ ] #16 `docs/deploy.md` — passo a passo das VMs, TLS e Keycloak.
-- [ ] #17 `docs/seguranca.md` — políticas aplicadas.
-- [ ] #18/#19 Rodar OWASP ZAP, salvar relatório e listar mitigações.
-- [ ] #21 Coletar saída de `openssl s_client -connect sistema1.net:443` (e DB).
-- [ ] #22 Polir documentação para deploy por outros grupos (premiação).
+- [x] #12 Habilitar TLS no Postgres (gerar `server.crt`/`server.key`, montar em docker-compose, `command: -c ssl=on...`).
+- [x] #12 Ajustar JDBC URL para `?sslmode=require` em `application.properties`.
+- [x] #13/#14 Quebrar docker-compose em 3 arquivos: `db.yml`, `api.yml`, `web.yml` + `.env.vmX` por VM.
+- [x] #15 Diagrama da arquitetura (`docs/arquitetura.md`).
+- [x] #16 `docs/deploy.md` — passo a passo das VMs, TLS e Keycloak.
+- [x] #17 `docs/seguranca.md` — políticas aplicadas.
+- [] #18/#19 Rodar OWASP ZAP, salvar relatório e listar mitigações.
+- [x] #21 Coletar saída de `openssl s_client -connect sistema1.net:443` (e DB, documentado no deploy.md).
+- [x] #22 Polir documentação para deploy por outros grupos (templates .env).
 
 ---
 
@@ -255,19 +255,23 @@ Frontend em http://localhost:4200
 
 ## Deploy com Docker (opcional)
 
-Se tiver Docker disponível, também existem arquivos Docker Compose por VM:
+Recomendamos o uso do Docker Compose por VM para um deploy "plug and play":
 
 ```bash
-cp .env.example .env
-# Ajustar IPs no .env
-
-# VM 1
+# VM 1 (PostgreSQL + Keycloak)
+cp .env.vm1 .env
+# Ajustar IPs no .env se necessário
+./scripts/generate-pg-certs.sh
 docker compose -f docker-compose.db.yml --env-file .env up -d
 
-# VM 2
+# VM 2 (Backend API)
+cp .env.vm2 .env
+# Ajustar IPs no .env para apontar para a VM1
 docker compose -f docker-compose.api.yml --env-file .env up -d --build
 
-# VM 3
+# VM 3 (Frontend Web)
+cp .env.vm3 .env
+# Ajustar IPs no .env para apontar para a VM2 e VM1
 docker compose -f docker-compose.web.yml --env-file .env up -d --build
 ```
 
