@@ -1,70 +1,170 @@
 # Deploy e Configuração da Infraestrutura
 
-## Configuração de DNS Local (`/etc/hosts`)
+Este documento concentra as instruções de deploy e infraestrutura do projeto Adorela.
 
-Para garantir que o redirecionamento, a autenticação OIDC (Keycloak) e os certificados TLS (HTTPS) funcionem corretamente utilizando os domínios configurados no Nginx, é **obrigatório** adicionar as seguintes entradas no arquivo de hosts da máquina de onde você irá acessar a aplicação.
+## Visão geral
 
-### No Linux / macOS
-Edite o arquivo `/etc/hosts` com permissões de superusuário:
+- **VM 1:** PostgreSQL + Keycloak
+- **VM 2:** API Spring Boot
+- **VM 3:** Frontend Angular servido pelo Nginx
+
+Para complementar este guia:
+
+- [Arquitetura](arquitetura.md)
+- [Segurança](seguranca.md)
+- [Roteiro de testes](testes.md)
+
+## Configuração de hosts / DNS local
+
+Para que autenticação OIDC, redirecionamentos e certificados TLS funcionem corretamente com os domínios configurados no Nginx, adicione uma entrada para `sistema1.net`, `sistema2.net` e `e-instancia.net` na máquina cliente.
+
+### Linux / macOS
+
 ```bash
 sudo nano /etc/hosts
 ```
-Adicione as seguintes linhas ao final do arquivo:
+
+Adicione ao final do arquivo:
+
 ```text
 # Adorela - Domínios Locais / Teste
 127.0.0.1       sistema1.net sistema2.net e-instancia.net
-
-# OBS: Caso esteja acessando as VMs remotamente, substitua "127.0.0.1" 
-# pelo IP público ou local da VM 3 (onde está rodando o Frontend/Nginx).
 ```
 
-### No Windows
+> Se estiver acessando as VMs remotamente, substitua `127.0.0.1` pelo IP da VM 3 (Frontend/Nginx).
+
+### Windows
+
 1. Abra o **Bloco de Notas** como Administrador.
-2. Navegue até `C:\Windows\System32\drivers\etc\` e abra o arquivo `hosts` (selecione "Todos os Arquivos" no canto inferior direito para visualizar).
-3. Adicione as seguintes linhas ao final do arquivo:
+2. Abra `C:\Windows\System32\drivers\etc\hosts`.
+3. Adicione:
+
 ```text
-# Adorela - Dominios Locais / Teste
+# Adorela - Domínios Locais / Teste
 127.0.0.1       sistema1.net sistema2.net e-instancia.net
 ```
-4. Salve o arquivo.
 
----
----
+## Deploy com Docker Compose por VM
 
-## Deploy nas 3 VMs
+Os arquivos `.env.vm1`, `.env.vm2` e `.env.vm3` servem como base para a configuração de cada máquina.
 
-O deploy segue uma divisão lógica em três máquinas virtuais. 
+### VM 1 — Banco de dados e IAM
 
-### Preparação Comum
-1. Clone o repositório em todas as VMs.
-2. Certifique-se de configurar os IPs corretos em cada arquivo `.env` gerado a partir dos templates `.env.vmX`.
+1. Gere os certificados do PostgreSQL:
 
-### VM 1: Banco de Dados e IAM (PostgreSQL + Keycloak)
-1. Antes de iniciar, execute o script de geração de certificados TLS para o Postgres:
    ```bash
    ./scripts/generate-pg-certs.sh
    ```
-2. Inicie os containers usando o docker-compose correspondente:
+
+2. Suba PostgreSQL + Keycloak:
+
    ```bash
    docker compose -f docker-compose.db.yml --env-file .env.vm1 up -d
    ```
-3. Acesse o Keycloak em `http://<VM1_IP>:8080`, acesse a aba Clients e configure o `adorela-web` para aceitar `Valid Redirect URIs` do IP do Frontend (VM3).
 
-### VM 2: Backend API
-1. Atualize o arquivo `.env.vm2` garantindo que o IP do Keycloak (VM1) está preenchido corretamente para validação de JWT, e que os CORS apontem para o Frontend.
-2. Inicie a API:
+3. No Keycloak, ajuste o client `adorela-web` para aceitar o endereço do frontend em **Valid Redirect URIs** e **Web Origins**.
+
+### VM 2 — Backend API
+
+1. Revise o `.env.vm2` com o IP da VM 1 (issuer/JWT) e o host do frontend.
+2. Suba a API:
+
    ```bash
    docker compose -f docker-compose.api.yml --env-file .env.vm2 up -d --build
    ```
 
-### VM 3: Frontend Web
-1. Atualize o arquivo `.env.vm3` apontando para o IP da API (VM2) e do Keycloak (VM1).
-2. Inicie o Frontend, que ficará disponível em HTTPS (TLS) na porta 443:
+### VM 3 — Frontend Web
+
+1. Revise o `.env.vm3` com os IPs da API (VM 2) e do Keycloak (VM 1).
+2. Suba o frontend:
+
    ```bash
    docker compose -f docker-compose.web.yml --env-file .env.vm3 up -d --build
    ```
 
-## Verificação TLS e Testes (Task #21)
-Para validar os certificados configurados (tanto na API, Frontend e DB), utilize os comandos abaixo:
-- **API/Frontend TLS:** `openssl s_client -connect sistema1.net:443 -showcerts < /dev/null`
-- **PostgreSQL TLS:** `openssl s_client -starttls postgres -connect <VM1_IP>:5432 -showcerts < /dev/null`
+## Execução manual com scripts
+
+Caso prefira executar os serviços fora do Docker, use os scripts em `scripts/`.
+
+### VM 1
+
+Dependências recomendadas:
+
+```bash
+sudo apt update && sudo apt install -y postgresql openjdk-17-jre-headless
+```
+
+```bash
+chmod +x scripts/vm1-start.sh
+./scripts/vm1-start.sh
+```
+
+### VM 2
+
+Dependências recomendadas:
+
+```bash
+sudo apt update && sudo apt install -y openjdk-17-jdk maven
+```
+
+```bash
+chmod +x scripts/vm2-start.sh
+export VM1_HOST=<IP_DA_VM1>
+export WEB_HOST=<IP_DA_VM3>
+./scripts/vm2-start.sh
+```
+
+### VM 3
+
+Dependências recomendadas:
+
+```bash
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt install -y nodejs
+```
+
+```bash
+chmod +x scripts/vm3-start.sh
+export VM1_HOST=<IP_DA_VM1>
+export API_HOST=<IP_DA_VM2>
+./scripts/vm3-start.sh
+```
+
+## Desenvolvimento local
+
+### Backend
+
+```bash
+./mvnw spring-boot:run
+```
+
+### Frontend
+
+```bash
+cd adorela-web
+npm install
+npm start
+```
+
+## Endereços úteis
+
+### Deploy em 3 VMs
+
+- **Frontend:** `http://<VM3_IP>` ou `https://sistema1.net`
+- **API:** `http://<VM2_IP>:8080/api/products`
+- **Swagger:** `http://<VM2_IP>:8080/swagger-ui.html`
+- **Keycloak:** `http://<VM1_IP>:8080`
+
+### Desenvolvimento local
+
+- **Frontend:** `http://localhost:4200`
+- **API:** `http://localhost:8080`
+- **Swagger:** `http://localhost:8080/swagger-ui.html`
+- **Keycloak:** `http://localhost:8080`
+
+## Verificação
+
+- **Frontend/API com TLS:** `openssl s_client -connect sistema1.net:443 -showcerts < /dev/null`
+- **PostgreSQL com TLS:** `openssl s_client -starttls postgres -connect <VM1_IP>:5432 -showcerts < /dev/null`
+- **Headers HTTPS:** `curl -I -k https://sistema1.net`
+- **Redirect HTTP → HTTPS:** `curl -I http://sistema1.net`
